@@ -10,6 +10,7 @@ public record ConsensusNode(@NonNull String ip, @NonNull String port, @NonNull S
      *
      * @return the address
      */
+    @NonNull
     public String getAddress() {
         return ip + ":" + port;
     }
@@ -19,6 +20,7 @@ public record ConsensusNode(@NonNull String ip, @NonNull String port, @NonNull S
      *
      * @return the account ID
      */
+    @NonNull
     public AccountId getAccountId() {
         return AccountId.fromString(account);
     }

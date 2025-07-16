@@ -60,7 +60,6 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     }
 
     public void setAccountMemo(final @Nullable String accountMemo) {
-        requireNotFrozen();
         this.accountMemo = accountMemo;
     }
 
@@ -76,7 +75,6 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     }
 
     public void setInitialBalance(final @Nullable Hbar initialBalance) {
-        requireNotFrozen();
         this.initialBalance = initialBalance;
     }
 

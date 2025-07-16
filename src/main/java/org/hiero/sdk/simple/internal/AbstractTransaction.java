@@ -2,13 +2,11 @@ package org.hiero.sdk.simple.internal;
 
 import com.hedera.hashgraph.sdk.AccountId;
 import com.hedera.hashgraph.sdk.Hbar;
-import com.hedera.hashgraph.sdk.PublicKey;
 import com.hedera.hashgraph.sdk.TransactionId;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import io.grpc.MethodDescriptor;
 import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Transaction;
@@ -24,31 +22,32 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Trans
 
     private Duration validDuration = Duration.ofSeconds(120);
 
-    private String memo;
-
-    private boolean frozen = false;
-
-    private final Map<PublicKey, byte[]> transactionSignatures = new HashMap<>();
-
-    private TransactionBody transactionBody;
+    private String memo = "";
 
     @NonNull
     protected abstract T self();
 
+    @NonNull
     protected abstract Class<R> getResponseType();
 
+    @NonNull
     protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> getMethodDescriptor();
 
     @Override
+    @NonNull
     public FrozenTransaction<R> freezeTransaction(@NonNull HieroClient client) {
         final AccountId nodeAccount = client.getNetworkSettings().getConsensusNodes().iterator().next().getAccountId();
-        TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
-        ResponseFactory<R> responseFactory = ResponseFactory.forResponseType(getResponseType());
-        return new DefaultFrozenTransaction(getMethodDescriptor(), transactionBody, responseFactory, client);
+        final TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
+        final ResponseFactory<R> responseFactory = ResponseFactory.forResponseType(getResponseType());
+        final MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor = getMethodDescriptor();
+        return new DefaultFrozenTransaction(methodDescriptor, transactionBody, responseFactory, client);
     }
 
+    @NonNull
     private TransactionBody buildTransactionBody(@NonNull final TransactionId transactionId,
-            final AccountId nodeAccount) {
+            @NonNull final AccountId nodeAccount) {
+        Objects.requireNonNull(transactionId, "transactionId must not be null");
+        Objects.requireNonNull(nodeAccount, "nodeAccount must not be null");
         final TransactionBody.Builder builder = TransactionBody.newBuilder()
                 .setTransactionID(ProtobufUtil.toProtobuf(transactionId))
                 .setNodeAccountID(ProtobufUtil.toProtobuf(nodeAccount))
@@ -60,17 +59,6 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Trans
     }
 
     protected abstract void updateBodyBuilderWithSpecifics(TransactionBody.Builder builder);
-
-    protected void requireNotFrozen() {
-        if (isFrozen()) {
-            throw new IllegalStateException(
-                    "transaction is immutable; it has at least one signature or has been explicitly frozen");
-        }
-    }
-
-    private boolean isFrozen() {
-        return frozen;
-    }
 
     public Hbar getFee() {
         return fee;

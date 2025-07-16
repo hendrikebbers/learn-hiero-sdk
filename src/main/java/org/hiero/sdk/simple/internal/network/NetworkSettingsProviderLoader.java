@@ -9,6 +9,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import org.hiero.sdk.simple.network.NetworkSettings;
 import org.hiero.sdk.simple.network.spi.NetworkSettingsProvider;
+import org.jspecify.annotations.NonNull;
 
 /**
  * Loads network settings from all available {@link NetworkSettingsProvider} implementations by using Java SPI.
@@ -23,12 +24,12 @@ public final class NetworkSettingsProviderLoader {
 
     private NetworkSettingsProviderLoader() {
         final Set<NetworkSettings> loaded = new HashSet<>();
-        ServiceLoader<NetworkSettingsProvider> loader = ServiceLoader.load(NetworkSettingsProvider.class);
+        final ServiceLoader<NetworkSettingsProvider> loader = ServiceLoader.load(NetworkSettingsProvider.class);
         loader.stream().forEach(provider -> {
             final NetworkSettingsProvider networkSettingsProvider = provider.get();
-            logger.log(Level.INFO,"Loading network settings from provider: {}", networkSettingsProvider.getName());
+            logger.log(Level.INFO, "Loading network settings from provider: {}", networkSettingsProvider.getName());
             final Set<NetworkSettings> networkSettingsFromProvider = networkSettingsProvider.createNetworkSettings();
-            logger.log(Level.DEBUG,"Loaded {} network settings from provider {}", networkSettingsFromProvider.size(),
+            logger.log(Level.DEBUG, "Loaded {} network settings from provider {}", networkSettingsFromProvider.size(),
                     networkSettingsProvider.getName());
             networkSettingsFromProvider.forEach(setting -> {
                 if (loaded.stream().anyMatch(
@@ -48,6 +49,7 @@ public final class NetworkSettingsProviderLoader {
      *
      * @return all loaded network settings
      */
+    @NonNull
     public Set<NetworkSettings> all() {
         return settings;
     }
@@ -58,7 +60,9 @@ public final class NetworkSettingsProviderLoader {
      * @param identifier the network identifier
      * @return the network settings for the given identifier
      */
-    public Optional<NetworkSettings> forIdentifier(String identifier) {
+    @NonNull
+    public Optional<NetworkSettings> forIdentifier(@NonNull final String identifier) {
+        Objects.requireNonNull(identifier, "identifier must not be null");
         return all().stream().filter(settings -> Objects.equals(settings.getNetworkIdentifier(), identifier))
                 .findFirst();
     }
@@ -68,6 +72,7 @@ public final class NetworkSettingsProviderLoader {
      *
      * @return the singleton instance of this class
      */
+    @NonNull
     public static NetworkSettingsProviderLoader getInstance() {
         return instance;
     }

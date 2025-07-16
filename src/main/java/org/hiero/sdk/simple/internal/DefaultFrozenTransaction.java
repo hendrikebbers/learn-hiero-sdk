@@ -32,22 +32,22 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
     private final ResponseFactory<R> responseFactory;
 
     public DefaultFrozenTransaction(
-            MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor,
-            TransactionBody transactionBody,
-            ResponseFactory<R> responseFactory,
-            HieroClient client) {
-        this.methodDescriptor = methodDescriptor;
-        this.transactionBody = transactionBody;
-        this.client = client;
-        this.responseFactory = responseFactory;
+            @NonNull final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor,
+            @NonNull final TransactionBody transactionBody,
+            @NonNull final ResponseFactory<R> responseFactory,
+            @NonNull final HieroClient client) {
+        this.methodDescriptor = Objects.requireNonNull(methodDescriptor, "methodDescriptor must not be null");
+        this.transactionBody = Objects.requireNonNull(transactionBody, "transactionBody must not be null");
+        this.client = Objects.requireNonNull(client, "client must not be null");
+        this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
         if (client.signAutomaticallyWithOperator()) {
             sign(client.getOperatorAccount());
         }
     }
 
     @Override
-    public @NonNull FrozenTransaction sign(@NonNull PublicKey publicKey,
-            @NonNull UnaryOperator<byte[]> transactionSigner) {
+    public @NonNull FrozenTransaction sign(@NonNull final PublicKey publicKey,
+            @NonNull final UnaryOperator<byte[]> transactionSigner) {
         Objects.requireNonNull(publicKey, "publicKey must not be null");
         Objects.requireNonNull(transactionSigner, "transactionSigner must not be null");
 
@@ -77,7 +77,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
     public R executeAndWait() throws ExecutionException, InterruptedException {
         return execute().get();
     }
-
+    
     private com.hedera.hashgraph.sdk.proto.Transaction createProtobufTransaction() {
         if (transactionBody == null) {
             throw new IllegalStateException(

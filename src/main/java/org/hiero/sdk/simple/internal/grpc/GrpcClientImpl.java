@@ -9,24 +9,28 @@ import io.grpc.ClientCall.Listener;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
 import io.grpc.Status;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.network.ConsensusNode;
+import org.jspecify.annotations.NonNull;
 
 public class GrpcClientImpl implements GrpcClient {
 
     private final Channel channel;
 
-    public GrpcClientImpl(ConsensusNode node) {
+    public GrpcClientImpl(@NonNull final ConsensusNode node) {
         this(GrpcChannelFactory.createChannel(node));
     }
 
-    public GrpcClientImpl(Channel channel) {
-        this.channel = channel;
+    public GrpcClientImpl(@NonNull final Channel channel) {
+        this.channel = Objects.requireNonNull(channel, "channel must not be null");
     }
 
-    public CompletableFuture<TransactionResponse> sendTransaction(Transaction transaction,
-            MethodDescriptor<Transaction, TransactionResponse> methodDescriptor) {
+    public CompletableFuture<TransactionResponse> sendTransaction(@NonNull final Transaction transaction,
+            @NonNull final MethodDescriptor<Transaction, TransactionResponse> methodDescriptor) {
+        Objects.requireNonNull(transaction, "transaction must not be null");
+        Objects.requireNonNull(methodDescriptor, "methodDescriptor must not be null");
         final CompletableFuture<TransactionResponse> future = new CompletableFuture<>();
         final ClientCall<Transaction, TransactionResponse> call = channel.newCall(methodDescriptor,
                 CallOptions.DEFAULT);

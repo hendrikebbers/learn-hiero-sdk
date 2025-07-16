@@ -1,6 +1,7 @@
 package org.hiero.sdk.simple.internal;
 
 import com.hedera.hashgraph.sdk.TransactionId;
+import java.util.Objects;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
@@ -14,9 +15,9 @@ public class HieroClientImpl implements HieroClient {
 
     private final NetworkSettings networkSettings;
 
-    public HieroClientImpl(@NonNull Account operatorAccount, @NonNull NetworkSettings networkSettings) {
-        this.operatorAccount = operatorAccount;
-        this.networkSettings = networkSettings;
+    public HieroClientImpl(@NonNull final Account operatorAccount, @NonNull final NetworkSettings networkSettings) {
+        this.operatorAccount = Objects.requireNonNull(operatorAccount, "operatorAccount must not be null");
+        this.networkSettings = Objects.requireNonNull(networkSettings, "networkSettings must not be null");
     }
 
     @Override
@@ -29,10 +30,12 @@ public class HieroClientImpl implements HieroClient {
         return new GrpcClientImpl(networkSettings.getConsensusNodes().iterator().next());
     }
 
+    @NonNull
     public Account getOperatorAccount() {
         return operatorAccount;
     }
 
+    @NonNull
     public NetworkSettings getNetworkSettings() {
         return networkSettings;
     }
