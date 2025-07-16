@@ -4,5 +4,9 @@ public interface Key {
 
     byte[] toBytes();
 
-    boolean isAlgorithm(SignatureAlgorithm algorithm);
+    byte[] toBytesRaw();
+
+    byte[] toBytesDER();
+
+    SignatureAlgorithm algorithm();
 }

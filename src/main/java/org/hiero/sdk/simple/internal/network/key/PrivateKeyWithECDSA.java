@@ -1,8 +1,14 @@
 package org.hiero.sdk.simple.internal.network.key;
 
 import static org.hiero.sdk.simple.internal.network.key.KeyAlgorithmUtils.ECDSA_SECP256K1_DOMAIN;
+import static org.hiero.sdk.simple.internal.network.key.KeyAlgorithmUtils.ID_ECDSA_SECP256K1;
+import static org.hiero.sdk.simple.internal.network.key.KeyAlgorithmUtils.bigIntTo32Bytes;
 
+import java.io.IOException;
 import java.math.BigInteger;
+import org.bouncycastle.asn1.DERBitString;
+import org.bouncycastle.asn1.sec.ECPrivateKey;
+import org.bouncycastle.asn1.x9.X962Parameters;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import org.bouncycastle.crypto.params.ECPrivateKeyParameters;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
@@ -12,6 +18,7 @@ import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.util.Arrays;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
+import org.hiero.sdk.simple.network.keys.SignatureAlgorithm;
 import org.jspecify.annotations.Nullable;
 
 public record PrivateKeyWithECDSA(BigInteger keyData, @Nullable KeyParameter chainCode) implements PrivateKey {
@@ -29,9 +36,37 @@ public record PrivateKeyWithECDSA(BigInteger keyData, @Nullable KeyParameter cha
         var signer = new ECDSASigner(new HMacDSAKCalculator(new SHA256Digest()));
         signer.init(true, new ECPrivateKeyParameters(keyData, ECDSA_SECP256K1_DOMAIN));
         BigInteger[] bigSig = signer.generateSignature(hash);
-        byte[] sigBytes = Arrays.copyOf(KeyAlgorithmUtils.bigIntTo32Bytes(bigSig[0]), 64);
-        System.arraycopy(KeyAlgorithmUtils.bigIntTo32Bytes(bigSig[1]), 0, sigBytes, 32, 32);
+        byte[] sigBytes = Arrays.copyOf(bigIntTo32Bytes(bigSig[0]), 64);
+        System.arraycopy(bigIntTo32Bytes(bigSig[1]), 0, sigBytes, 32, 32);
         return sigBytes;
     }
 
+    @Override
+    public byte[] toBytes() {
+        return toBytesDER();
+    }
+
+    @Override
+    public byte[] toBytesRaw() {
+        return bigIntTo32Bytes(keyData);
+    }
+
+    @Override
+    public byte[] toBytesDER() {
+        try {
+            return new ECPrivateKey(
+                    256,
+                    keyData,
+                    new DERBitString(createPublicKey().toBytesRaw()),
+                    new X962Parameters(ID_ECDSA_SECP256K1))
+                    .getEncoded("DER");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public SignatureAlgorithm algorithm() {
+        return SignatureAlgorithm.ECDSA;
+    }
 }

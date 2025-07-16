@@ -13,6 +13,10 @@ import org.hiero.sdk.simple.network.keys.SignatureAlgorithm;
 
 public record PublicKeyWithECDSA(byte[] keyData) implements PublicKey {
 
+    public PublicKeyWithECDSA {
+        keyData = Arrays.copyOf(keyData, keyData.length);
+    }
+
     @Override
     public boolean verify(byte[] message, byte[] signature) {
         var hash = KeyAlgorithmUtils.calcKeccak256(message);
@@ -29,6 +33,16 @@ public record PublicKeyWithECDSA(byte[] keyData) implements PublicKey {
 
     @Override
     public byte[] toBytes() {
+        return toBytesDER();
+    }
+
+    @Override
+    public byte[] toBytesRaw() {
+        return Arrays.copyOf(keyData, keyData.length);
+    }
+
+    @Override
+    public byte[] toBytesDER() {
         try {
             return new SubjectPublicKeyInfo(
                     new AlgorithmIdentifier(KeyAlgorithmUtils.ID_EC_PUBLIC_KEY, KeyAlgorithmUtils.ID_ECDSA_SECP256K1),
@@ -40,11 +54,7 @@ public record PublicKeyWithECDSA(byte[] keyData) implements PublicKey {
     }
 
     @Override
-    public boolean isAlgorithm(SignatureAlgorithm algorithm) {
-        if (algorithm == SignatureAlgorithm.ECDSA) {
-            return true;
-        }
-        return false;
+    public SignatureAlgorithm algorithm() {
+        return SignatureAlgorithm.ECDSA;
     }
-
 }
