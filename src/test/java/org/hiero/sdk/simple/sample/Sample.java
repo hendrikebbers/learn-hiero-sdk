@@ -12,13 +12,6 @@ import org.hiero.sdk.simple.transactions.AccountCreateTransaction;
 
 public class Sample {
 
-    private static Account createOperatorAccount() {
-        final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        final AccountId operatorAccountId = AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID"));
-        final PrivateKey operatorPrivateKey = PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"));
-        return Account.of(operatorAccountId, operatorPrivateKey);
-    }
-
     public static void main(String[] args) throws Exception {
         final Account operatorAccount = createOperatorAccount();
         final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
@@ -33,6 +26,15 @@ public class Sample {
                 .withInitialBalance(Hbar.from(2))
                 .freezeTransaction(hieroClient)
                 .executeAndWait();
+
         System.out.println("Transaction executed!");
+    }
+
+    private static Account createOperatorAccount() {
+        // Load environment variables from .env file
+        final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+        final AccountId operatorAccountId = AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID"));
+        final PrivateKey operatorPrivateKey = PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"));
+        return Account.of(operatorAccountId, operatorPrivateKey);
     }
 }
