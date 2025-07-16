@@ -21,6 +21,11 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     }
 
     @Override
+    protected Class<AccountCreateResponse> getResponseType() {
+        return AccountCreateResponse.class;
+    }
+
+    @Override
     protected void updateFrozenBodyBuilderWithSpecifics(Builder builder) {
         final CryptoCreateTransactionBody.Builder cryptoCreateBuilder = CryptoCreateTransactionBody.newBuilder()
                 .setInitialBalance(initialBalance != null ? initialBalance.toTinybars() : 0)
@@ -28,7 +33,6 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
         builder.setCryptoCreateAccount(cryptoCreateBuilder);
     }
 
-    @Override
     protected AccountCreateResponse createResponseFromProtobuf(TransactionResponse response) {
         //TODO: Implement response parsing to extract account ID
         return new AccountCreateResponse(null);

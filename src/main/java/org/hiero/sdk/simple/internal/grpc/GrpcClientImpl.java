@@ -4,7 +4,6 @@ import com.hedera.hashgraph.sdk.proto.TransactionResponse;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
-import io.grpc.Grpc;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.Metadata;
 import io.grpc.MethodDescriptor;
@@ -13,15 +12,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import org.hiero.sdk.simple.GrpcClient;
 import org.hiero.sdk.simple.network.ConsensusNode;
 
-public class GrpcClient {
+public class GrpcClientImpl implements GrpcClient {
 
     private final static Executor executor = Executors.newCachedThreadPool();
 
     private final Channel channel;
 
-    public GrpcClient(Channel channel) {
+    public GrpcClientImpl(ConsensusNode node) {
+        this.channel = createChannel(node);
+    }
+
+    public GrpcClientImpl(Channel channel) {
         this.channel = channel;
     }
 
@@ -54,17 +58,20 @@ public class GrpcClient {
             Request request) {
         final MethodDescriptorFactory methodDescriptorFactory = MethodDescriptorFactory.forRequestType(
                 request.getClass());
-        final MethodDescriptor<Request, TransactionResponse> methodDescriptor = methodDescriptorFactory.createMethodDescriptor(request);
+        final MethodDescriptor<Request, TransactionResponse> methodDescriptor = methodDescriptorFactory.createMethodDescriptor(
+                request);
         final CallOptions callOptions = CallOptions.DEFAULT;
         return channel.newCall(methodDescriptor, callOptions);
     }
 
     public static Channel createChannel(ConsensusNode node) {
-            final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forTarget(node.getAddress()).usePlaintext();
-            return channelBuilder.keepAliveTimeout(10L, TimeUnit.SECONDS)
-                    .keepAliveWithoutCalls(true)
-                    .disableRetry()
-                    .executor(executor)
-                    .build();
+        final ManagedChannelBuilder<?> channelBuilder = ManagedChannelBuilder.forTarget(node.getAddress())
+                .usePlaintext();
+        return channelBuilder.keepAliveTimeout(10L, TimeUnit.SECONDS)
+                .keepAliveWithoutCalls(true)
+                .disableRetry()
+                .executor(executor)
+                .build();
     }
+
 }
