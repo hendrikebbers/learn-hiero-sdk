@@ -15,8 +15,8 @@ import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.TransactionResponse;
 import org.hiero.sdk.simple.grpc.GrpcClient;
+import org.hiero.sdk.simple.grpc.ResponseFactory;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
-import org.hiero.sdk.simple.transactions.ResponseFactory;
 import org.jspecify.annotations.NonNull;
 
 public class DefaultFrozenTransaction<R extends TransactionResponse> implements FrozenTransaction<R> {

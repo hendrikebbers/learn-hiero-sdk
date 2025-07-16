@@ -13,8 +13,8 @@ import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Transaction;
 import org.hiero.sdk.simple.TransactionResponse;
+import org.hiero.sdk.simple.grpc.ResponseFactory;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
-import org.hiero.sdk.simple.transactions.ResponseFactory;
 import org.jspecify.annotations.NonNull;
 
 public abstract class AbstractTransaction<T extends Transaction, R extends TransactionResponse> implements

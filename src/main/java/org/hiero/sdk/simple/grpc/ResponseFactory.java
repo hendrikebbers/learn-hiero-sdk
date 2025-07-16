@@ -1,4 +1,4 @@
-package org.hiero.sdk.simple.transactions;
+package org.hiero.sdk.simple.grpc;
 
 import java.util.ServiceLoader;
 import org.hiero.sdk.simple.TransactionResponse;
@@ -9,7 +9,7 @@ public interface ResponseFactory<R extends TransactionResponse> {
 
     R createResponse(com.hedera.hashgraph.sdk.proto.TransactionResponse grpcResponse);
 
-    static <R2 extends TransactionResponse> ResponseFactory<R2> forResponseType(Class<R2> cls) {
+    static <TYPE extends TransactionResponse> ResponseFactory<TYPE> forResponseType(Class<TYPE> cls) {
         return ServiceLoader.load(ResponseFactory.class).stream()
                 .map(p -> p.get())
                 .filter(factory -> factory.getSupportedResponseType().equals(cls))
