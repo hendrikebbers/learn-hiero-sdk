@@ -12,16 +12,18 @@ import org.hiero.sdk.simple.transactions.AccountCreateTransaction;
 
 public class Sample {
 
-    public static void main(String[] args) throws Exception {
+    private static Account createOperatorAccount() {
         final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
         final AccountId operatorAccountId = AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID"));
         final PrivateKey operatorPrivateKey = PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"));
-        final Account operatorAccount = Account.of(operatorAccountId, operatorPrivateKey);
+        return Account.of(operatorAccountId, operatorPrivateKey);
+    }
 
+    public static void main(String[] args) throws Exception {
+        final Account operatorAccount = createOperatorAccount();
         final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
 
-        final PrivateKey privateKeyForNewAccount = PrivateKey.generateED25519();
-        final PublicKey publicKeyForNewAccount = privateKeyForNewAccount.getPublicKey();
+        final PublicKey publicKeyForNewAccount = PrivateKey.generateED25519().getPublicKey();
 
         final AccountCreateResponse response = new AccountCreateTransaction()
                 .withKey(publicKeyForNewAccount)
