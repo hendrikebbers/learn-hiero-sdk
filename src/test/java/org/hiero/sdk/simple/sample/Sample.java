@@ -31,5 +31,6 @@ public class Sample {
                 .withInitialBalance(Hbar.from(2))
                 .freezeTransaction(hieroClient)
                 .executeAndWait();
+        System.out.println("Transaction executed!");
     }
 }
