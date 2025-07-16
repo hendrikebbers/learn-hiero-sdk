@@ -1,7 +1,7 @@
-package org.hiero.sdk.simple.network.spi;
+package org.hiero.sdk.simple.network.settings.spi;
 
 import java.util.Set;
-import org.hiero.sdk.simple.network.NetworkSettings;
+import org.hiero.sdk.simple.network.settings.NetworkSettings;
 import org.jspecify.annotations.NonNull;
 
 /**

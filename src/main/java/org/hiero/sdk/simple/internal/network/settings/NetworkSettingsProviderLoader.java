@@ -1,4 +1,4 @@
-package org.hiero.sdk.simple.internal.network;
+package org.hiero.sdk.simple.internal.network.settings;
 
 import java.lang.System.Logger.Level;
 import java.util.Collections;
@@ -7,8 +7,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
-import org.hiero.sdk.simple.network.NetworkSettings;
-import org.hiero.sdk.simple.network.spi.NetworkSettingsProvider;
+import org.hiero.sdk.simple.network.settings.NetworkSettings;
+import org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -20,7 +20,7 @@ public final class NetworkSettingsProviderLoader {
 
     private final static NetworkSettingsProviderLoader instance = new NetworkSettingsProviderLoader();
 
-    private final Set<org.hiero.sdk.simple.network.NetworkSettings> settings;
+    private final Set<NetworkSettings> settings;
 
     private NetworkSettingsProviderLoader() {
         final Set<NetworkSettings> loaded = new HashSet<>();

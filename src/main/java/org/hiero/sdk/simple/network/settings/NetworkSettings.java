@@ -1,10 +1,11 @@
-package org.hiero.sdk.simple.network;
+package org.hiero.sdk.simple.network.settings;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import org.hiero.sdk.simple.internal.network.NetworkSettingsProviderLoader;
-import org.hiero.sdk.simple.network.spi.NetworkSettingsProvider;
+import org.hiero.sdk.simple.internal.network.settings.NetworkSettingsProviderLoader;
+import org.hiero.sdk.simple.network.ConsensusNode;
+import org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider;
 import org.jspecify.annotations.NonNull;
 
 /**

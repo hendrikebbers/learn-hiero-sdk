@@ -35,7 +35,7 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Trans
 
     @Override
     @NonNull
-    public FrozenTransaction<R> freezeTransaction(@NonNull HieroClient client) {
+    public FrozenTransaction<R> freezeTransaction(@NonNull final HieroClient client) {
         final AccountId nodeAccount = client.getNetworkSettings().getConsensusNodes().iterator().next().getAccountId();
         final TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
         final ResponseFactory<R> responseFactory = ResponseFactory.forResponseType(getResponseType());

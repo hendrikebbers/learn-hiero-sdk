@@ -1,11 +1,11 @@
-package org.hiero.sdk.simple.internal.network;
+package org.hiero.sdk.simple.internal.network.settings;
 
 import com.google.auto.service.AutoService;
 import java.util.Optional;
 import java.util.Set;
 import org.hiero.sdk.simple.network.ConsensusNode;
-import org.hiero.sdk.simple.network.NetworkSettings;
-import org.hiero.sdk.simple.network.spi.NetworkSettingsProvider;
+import org.hiero.sdk.simple.network.settings.NetworkSettings;
+import org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider;
 import org.jspecify.annotations.NonNull;
 
 /**

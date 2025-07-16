@@ -6,7 +6,7 @@ import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
 import org.hiero.sdk.simple.network.Account;
-import org.hiero.sdk.simple.network.NetworkSettings;
+import org.hiero.sdk.simple.network.settings.NetworkSettings;
 import org.jspecify.annotations.NonNull;
 
 public class HieroClientImpl implements HieroClient {

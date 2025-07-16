@@ -4,7 +4,7 @@ import com.hedera.hashgraph.sdk.TransactionId;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.HieroClientImpl;
 import org.hiero.sdk.simple.network.Account;
-import org.hiero.sdk.simple.network.NetworkSettings;
+import org.hiero.sdk.simple.network.settings.NetworkSettings;
 import org.jspecify.annotations.NonNull;
 
 public interface HieroClient {
