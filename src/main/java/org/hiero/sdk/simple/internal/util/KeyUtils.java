@@ -2,6 +2,7 @@ package org.hiero.sdk.simple.internal.util;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.PublicKey;
+import com.hedera.hashgraph.sdk.proto.Key;
 import com.hedera.hashgraph.sdk.proto.SignaturePair;
 
 public class KeyUtils {
@@ -17,6 +18,22 @@ public class KeyUtils {
                     .setPubKeyPrefix(ByteString.copyFrom(publicKey.toBytesRaw()))
                     .setEd25519(ByteString.copyFrom(signature))
                     .build();
+        }
+    }
+
+    public static Key toKeyProtobuf(com.hedera.hashgraph.sdk.Key key) {
+        if (key instanceof PublicKey publicKey) {
+            if (publicKey.isECDSA()) {
+                return com.hedera.hashgraph.sdk.proto.Key.newBuilder()
+                        .setECDSASecp256K1(ByteString.copyFrom(publicKey.toBytesRaw()))
+                        .build();
+            } else {
+                return com.hedera.hashgraph.sdk.proto.Key.newBuilder()
+                        .setEd25519(ByteString.copyFrom(publicKey.toBytesRaw()))
+                        .build();
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported key type: " + key.getClass().getName());
         }
     }
 

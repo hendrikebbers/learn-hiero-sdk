@@ -1,8 +1,8 @@
 package org.hiero.sdk.simple.internal;
 
 import com.hedera.hashgraph.sdk.TransactionId;
-import org.hiero.sdk.simple.GrpcClient;
 import org.hiero.sdk.simple.HieroClient;
+import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
 import org.hiero.sdk.simple.network.Account;
 import org.hiero.sdk.simple.network.NetworkSettings;
@@ -29,4 +29,11 @@ public class HieroClientImpl implements HieroClient {
         return new GrpcClientImpl(networkSettings.getConsensusNodes().iterator().next());
     }
 
+    public Account getOperatorAccount() {
+        return operatorAccount;
+    }
+
+    public NetworkSettings getNetworkSettings() {
+        return networkSettings;
+    }
 }

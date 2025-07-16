@@ -9,7 +9,7 @@ public interface MethodDescriptorFactory<Request extends Transaction, Response e
 
     Set<Class<Request>> getSupportedRequestTypes();
 
-    MethodDescriptor<Request, Response> createMethodDescriptor(Request request);
+    MethodDescriptor<Transaction, TransactionResponse> createMethodDescriptor(Request request);
 
     static <T extends Transaction> MethodDescriptorFactory forRequestType(Class<T> cls) {
         return null;

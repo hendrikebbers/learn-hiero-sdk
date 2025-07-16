@@ -1,10 +1,17 @@
 package org.hiero.sdk.simple.transactions;
 
 import com.hedera.hashgraph.sdk.Hbar;
+import com.hedera.hashgraph.sdk.Key;
 import com.hedera.hashgraph.sdk.proto.CryptoCreateTransactionBody;
+import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
+import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.TransactionBody.Builder;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
+import io.grpc.MethodDescriptor;
+import java.time.Duration;
 import org.hiero.sdk.simple.internal.AbstractTransaction;
+import org.hiero.sdk.simple.internal.util.KeyUtils;
+import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -13,6 +20,8 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     private String accountMemo;
 
     private Hbar initialBalance;
+
+    private Key key;
 
     @NonNull
     @Override
@@ -26,10 +35,17 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     }
 
     @Override
-    protected void updateFrozenBodyBuilderWithSpecifics(Builder builder) {
-        final CryptoCreateTransactionBody.Builder cryptoCreateBuilder = CryptoCreateTransactionBody.newBuilder()
-                .setInitialBalance(initialBalance != null ? initialBalance.toTinybars() : 0)
-                .setMemo(accountMemo);
+    protected MethodDescriptor<Transaction, TransactionResponse> getMethodDescriptor() {
+        return CryptoServiceGrpc.getCreateAccountMethod();
+    }
+
+    @Override
+    protected void updateBodyBuilderWithSpecifics(Builder builder) {
+        final CryptoCreateTransactionBody.Builder cryptoCreateBuilder = CryptoCreateTransactionBody.newBuilder();
+        cryptoCreateBuilder.setInitialBalance(initialBalance != null ? initialBalance.toTinybars() : 0);
+        cryptoCreateBuilder.setMemo(accountMemo);
+        cryptoCreateBuilder.setKey(KeyUtils.toKeyProtobuf(key));
+        cryptoCreateBuilder.setAutoRenewPeriod(ProtobufUtil.toProtobuf(Duration.ofDays(90)));
         builder.setCryptoCreateAccount(cryptoCreateBuilder);
     }
 
@@ -67,6 +83,20 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     @NonNull
     public AccountCreateTransaction withInitialBalance(final @Nullable Hbar initialBalance) {
         setInitialBalance(initialBalance);
+        return self();
+    }
+
+    public Key getKey() {
+        return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
+    }
+
+    @NonNull
+    public AccountCreateTransaction withKey(@NonNull Key key) {
+        setKey(key);
         return self();
     }
 }

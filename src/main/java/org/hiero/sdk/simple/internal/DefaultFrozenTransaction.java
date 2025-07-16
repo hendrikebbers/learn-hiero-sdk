@@ -2,7 +2,9 @@ package org.hiero.sdk.simple.internal;
 
 import com.hedera.hashgraph.sdk.PublicKey;
 import com.hedera.hashgraph.sdk.proto.SignatureMap;
+import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
+import io.grpc.MethodDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -10,14 +12,16 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.function.UnaryOperator;
 import org.hiero.sdk.simple.FrozenTransaction;
-import org.hiero.sdk.simple.GrpcClient;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.TransactionResponse;
+import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
 import org.hiero.sdk.simple.transactions.ResponseFactory;
 import org.jspecify.annotations.NonNull;
 
 public class DefaultFrozenTransaction<R extends TransactionResponse> implements FrozenTransaction<R> {
+
+    private final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor;
 
     private final Map<PublicKey, byte[]> transactionSignatures = new HashMap<>();
 
@@ -27,10 +31,18 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
 
     private final ResponseFactory<R> responseFactory;
 
-    public DefaultFrozenTransaction(TransactionBody transactionBody, ResponseFactory<R> responseFactory, HieroClient client) {
+    public DefaultFrozenTransaction(
+            MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor,
+            TransactionBody transactionBody,
+            ResponseFactory<R> responseFactory,
+            HieroClient client) {
+        this.methodDescriptor = methodDescriptor;
         this.transactionBody = transactionBody;
         this.client = client;
         this.responseFactory = responseFactory;
+        if (client.signAutomaticallyWithOperator()) {
+            sign(client.getOperatorAccount());
+        }
     }
 
     @Override
@@ -53,7 +65,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
         Objects.requireNonNull(client, "client must not be null");
         final com.hedera.hashgraph.sdk.proto.Transaction protobufTransaction = createProtobufTransaction();
         final GrpcClient grpcClient = client.getGrpcClient();
-        return grpcClient.sendTransaction(protobufTransaction).handle((response, throwable) -> {
+        return grpcClient.sendTransaction(protobufTransaction, methodDescriptor).handle((response, throwable) -> {
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
             }
