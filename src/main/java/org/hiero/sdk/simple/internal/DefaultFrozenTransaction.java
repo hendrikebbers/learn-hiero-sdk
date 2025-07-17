@@ -1,6 +1,5 @@
 package org.hiero.sdk.simple.internal;
 
-import com.hedera.hashgraph.sdk.PublicKey;
 import com.hedera.hashgraph.sdk.proto.SignatureMap;
 import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
@@ -17,6 +16,7 @@ import org.hiero.sdk.simple.TransactionResponse;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.grpc.ResponseFactory;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
+import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
 public class DefaultFrozenTransaction<R extends TransactionResponse> implements FrozenTransaction<R> {
@@ -77,7 +77,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
     public R executeAndWait() throws ExecutionException, InterruptedException {
         return execute().get();
     }
-    
+
     private com.hedera.hashgraph.sdk.proto.Transaction createProtobufTransaction() {
         if (transactionBody == null) {
             throw new IllegalStateException(

@@ -1,5 +1,5 @@
 package org.hiero.sdk.simple.network.keys;
 
-public enum SignatureAlgorithm {
+public enum KeyAlgorithm {
     ED25519, ECDSA;
 }

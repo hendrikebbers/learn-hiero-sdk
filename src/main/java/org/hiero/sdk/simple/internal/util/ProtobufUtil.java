@@ -1,8 +1,6 @@
 package org.hiero.sdk.simple.internal.util;
 
 import com.google.protobuf.ByteString;
-import com.hedera.hashgraph.sdk.AccountId;
-import com.hedera.hashgraph.sdk.TransactionId;
 import com.hedera.hashgraph.sdk.proto.AccountID;
 import com.hedera.hashgraph.sdk.proto.Timestamp;
 import com.hedera.hashgraph.sdk.proto.TimestampSeconds;
@@ -10,37 +8,37 @@ import com.hedera.hashgraph.sdk.proto.TransactionID;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import org.hiero.sdk.simple.network.AccountId;
+import org.hiero.sdk.simple.network.TransactionId;
 import org.jspecify.annotations.NonNull;
 
 public class ProtobufUtil {
 
-    public static TransactionID toProtobuf(TransactionId transactionId) {
-        var id = TransactionID.newBuilder()
-                .setScheduled(transactionId.getScheduled())
-                .setNonce((transactionId.getNonce() != null) ? transactionId.getNonce() : 0);
+    public static TransactionID toProtobuf(@NonNull TransactionId transactionId) {
+        var id = TransactionID.newBuilder();
 
-        if (transactionId.accountId != null) {
-            id.setAccountID(toProtobuf(transactionId.accountId));
+        if (transactionId.accountId() != null) {
+            id.setAccountID(toProtobuf(transactionId.accountId()));
         }
 
-        if (transactionId.accountId != null) {
-            id.setTransactionValidStart(toProtobuf(transactionId.validStart));
+        if (transactionId.validStart() != null) {
+            id.setTransactionValidStart(toProtobuf(transactionId.validStart()));
         }
 
         return id.build();
     }
 
-    public static AccountID toProtobuf(AccountId accountId) {
+    public static AccountID toProtobuf(@NonNull AccountId accountId) {
         var accountIdBuilder = AccountID.newBuilder()
-                .setShardNum(accountId.shard)
-                .setRealmNum(accountId.realm);
-        if (accountId.aliasKey != null) {
+                .setShardNum(accountId.shard())
+                .setRealmNum(accountId.realm());
+        if (accountId.aliasKey() != null) {
             //TODO: Bad implemented in SDK
             // accountIdBuilder.setAlias(accountId.aliasKey.toProtobufKey().toByteString());
-        } else if (accountId.evmAddress != null) {
-            accountIdBuilder.setAlias(ByteString.copyFrom(accountId.evmAddress.toBytes()));
+        } else if (accountId.evmAddress() != null) {
+            accountIdBuilder.setAlias(ByteString.copyFrom(accountId.evmAddress().toBytes()));
         } else {
-            accountIdBuilder.setAccountNum(accountId.num);
+            accountIdBuilder.setAccountNum(accountId.num());
         }
         return accountIdBuilder.build();
     }

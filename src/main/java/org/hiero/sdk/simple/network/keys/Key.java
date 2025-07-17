@@ -1,12 +1,12 @@
 package org.hiero.sdk.simple.network.keys;
 
+import org.jspecify.annotations.NonNull;
+
 public interface Key {
 
-    byte[] toBytes();
+    @NonNull
+    byte[] toBytes(@NonNull KeyEncoding encoding);
 
-    byte[] toBytesRaw();
-
-    byte[] toBytesDER();
-
-    SignatureAlgorithm algorithm();
+    @NonNull
+    KeyAlgorithm algorithm();
 }

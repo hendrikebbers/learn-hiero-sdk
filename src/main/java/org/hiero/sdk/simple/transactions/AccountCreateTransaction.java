@@ -1,7 +1,6 @@
 package org.hiero.sdk.simple.transactions;
 
 import com.hedera.hashgraph.sdk.Hbar;
-import com.hedera.hashgraph.sdk.Key;
 import com.hedera.hashgraph.sdk.proto.CryptoCreateTransactionBody;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.Transaction;
@@ -12,6 +11,7 @@ import java.time.Duration;
 import org.hiero.sdk.simple.internal.AbstractTransaction;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
+import org.hiero.sdk.simple.network.keys.Key;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 

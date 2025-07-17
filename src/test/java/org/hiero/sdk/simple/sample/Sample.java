@@ -1,12 +1,13 @@
 package org.hiero.sdk.simple.sample;
 
-import com.hedera.hashgraph.sdk.AccountId;
 import com.hedera.hashgraph.sdk.Hbar;
-import com.hedera.hashgraph.sdk.PrivateKey;
-import com.hedera.hashgraph.sdk.PublicKey;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.network.Account;
+import org.hiero.sdk.simple.network.AccountId;
+import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
+import org.hiero.sdk.simple.network.keys.PrivateKey;
+import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.hiero.sdk.simple.transactions.AccountCreateResponse;
 import org.hiero.sdk.simple.transactions.AccountCreateTransaction;
 
@@ -16,7 +17,7 @@ public class Sample {
         final Account operatorAccount = createOperatorAccount();
         final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
 
-        final PublicKey publicKeyForNewAccount = PrivateKey.generateED25519().getPublicKey();
+        final PublicKey publicKeyForNewAccount = PrivateKey.generate(KeyAlgorithm.ED25519).createPublicKey();
 
         final AccountCreateResponse response = new AccountCreateTransaction()
                 .withKey(publicKeyForNewAccount)

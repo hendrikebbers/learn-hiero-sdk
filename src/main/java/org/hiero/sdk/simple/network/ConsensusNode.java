@@ -1,6 +1,5 @@
 package org.hiero.sdk.simple.network;
 
-import com.hedera.hashgraph.sdk.AccountId;
 import org.jspecify.annotations.NonNull;
 
 public record ConsensusNode(@NonNull String ip, @NonNull String port, @NonNull String account) {

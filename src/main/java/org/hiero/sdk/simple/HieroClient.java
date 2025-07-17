@@ -1,9 +1,9 @@
 package org.hiero.sdk.simple;
 
-import com.hedera.hashgraph.sdk.TransactionId;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.HieroClientImpl;
 import org.hiero.sdk.simple.network.Account;
+import org.hiero.sdk.simple.network.TransactionId;
 import org.hiero.sdk.simple.network.settings.NetworkSettings;
 import org.jspecify.annotations.NonNull;
 

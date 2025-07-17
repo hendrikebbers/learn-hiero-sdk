@@ -6,6 +6,7 @@ import static org.hiero.sdk.simple.internal.network.key.KeyAlgorithmUtils.bigInt
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.Objects;
 import org.bouncycastle.asn1.DERBitString;
 import org.bouncycastle.asn1.sec.ECPrivateKey;
 import org.bouncycastle.asn1.x9.X962Parameters;
@@ -16,9 +17,11 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.signers.ECDSASigner;
 import org.bouncycastle.crypto.signers.HMacDSAKCalculator;
 import org.bouncycastle.util.Arrays;
+import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
+import org.hiero.sdk.simple.network.keys.KeyEncoding;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
-import org.hiero.sdk.simple.network.keys.SignatureAlgorithm;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public record PrivateKeyWithECDSA(BigInteger keyData, @Nullable KeyParameter chainCode) implements PrivateKey {
@@ -42,31 +45,29 @@ public record PrivateKeyWithECDSA(BigInteger keyData, @Nullable KeyParameter cha
     }
 
     @Override
-    public byte[] toBytes() {
-        return toBytesDER();
-    }
-
-    @Override
-    public byte[] toBytesRaw() {
-        return bigIntTo32Bytes(keyData);
-    }
-
-    @Override
-    public byte[] toBytesDER() {
-        try {
-            return new ECPrivateKey(
-                    256,
-                    keyData,
-                    new DERBitString(createPublicKey().toBytesRaw()),
-                    new X962Parameters(ID_ECDSA_SECP256K1))
-                    .getEncoded("DER");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public @NonNull byte[] toBytes(@NonNull KeyEncoding encoding) {
+        Objects.requireNonNull(encoding, "encoding must not be null");
+        if (encoding == KeyEncoding.DER) {
+            try {
+                return new ECPrivateKey(
+                        256,
+                        keyData,
+                        new DERBitString(createPublicKey().toBytes(KeyEncoding.RAW)),
+                        new X962Parameters(ID_ECDSA_SECP256K1))
+                        .getEncoded("DER");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        if (encoding == KeyEncoding.RAW) {
+            return bigIntTo32Bytes(keyData);
+        }
+        throw new IllegalArgumentException("Unsupported key encoding: " + encoding);
     }
 
+
     @Override
-    public SignatureAlgorithm algorithm() {
-        return SignatureAlgorithm.ECDSA;
+    public KeyAlgorithm algorithm() {
+        return KeyAlgorithm.ECDSA;
     }
 }

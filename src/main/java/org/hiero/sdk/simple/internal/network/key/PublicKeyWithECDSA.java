@@ -4,12 +4,15 @@ package org.hiero.sdk.simple.internal.network.key;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Objects;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.crypto.signers.ECDSASigner;
+import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
+import org.hiero.sdk.simple.network.keys.KeyEncoding;
 import org.hiero.sdk.simple.network.keys.PublicKey;
-import org.hiero.sdk.simple.network.keys.SignatureAlgorithm;
+import org.jspecify.annotations.NonNull;
 
 public record PublicKeyWithECDSA(byte[] keyData) implements PublicKey {
 
@@ -32,29 +35,27 @@ public record PublicKeyWithECDSA(byte[] keyData) implements PublicKey {
     }
 
     @Override
-    public byte[] toBytes() {
-        return toBytesDER();
-    }
-
-    @Override
-    public byte[] toBytesRaw() {
-        return Arrays.copyOf(keyData, keyData.length);
-    }
-
-    @Override
-    public byte[] toBytesDER() {
-        try {
-            return new SubjectPublicKeyInfo(
-                    new AlgorithmIdentifier(KeyAlgorithmUtils.ID_EC_PUBLIC_KEY, KeyAlgorithmUtils.ID_ECDSA_SECP256K1),
-                    keyData)
-                    .getEncoded("DER");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+    public @NonNull byte[] toBytes(@NonNull KeyEncoding encoding) {
+        Objects.requireNonNull(encoding, "encoding must not be null");
+        if (encoding == KeyEncoding.DER) {
+            try {
+                return new SubjectPublicKeyInfo(
+                        new AlgorithmIdentifier(KeyAlgorithmUtils.ID_EC_PUBLIC_KEY,
+                                KeyAlgorithmUtils.ID_ECDSA_SECP256K1),
+                        keyData)
+                        .getEncoded("DER");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        if (encoding == KeyEncoding.RAW) {
+            return Arrays.copyOf(keyData, keyData.length);
+        }
+        throw new IllegalArgumentException("Unsupported key encoding: " + encoding);
     }
 
     @Override
-    public SignatureAlgorithm algorithm() {
-        return SignatureAlgorithm.ECDSA;
+    public KeyAlgorithm algorithm() {
+        return KeyAlgorithm.ECDSA;
     }
 }

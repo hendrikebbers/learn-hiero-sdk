@@ -1,9 +1,8 @@
 package org.hiero.sdk.simple.network;
 
-import com.hedera.hashgraph.sdk.AccountId;
-import com.hedera.hashgraph.sdk.PrivateKey;
-import com.hedera.hashgraph.sdk.PublicKey;
 import java.util.Objects;
+import org.hiero.sdk.simple.network.keys.PrivateKey;
+import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -45,6 +44,6 @@ public record Account(@NonNull AccountId accountId, @NonNull PublicKey publicKey
     @NonNull
     public static Account of(@NonNull AccountId accountId, @NonNull PrivateKey privateKey) {
         Objects.requireNonNull(privateKey, "privateKey must not be null");
-        return new Account(accountId, privateKey.getPublicKey(), privateKey);
+        return new Account(accountId, privateKey.createPublicKey(), privateKey);
     }
 }
