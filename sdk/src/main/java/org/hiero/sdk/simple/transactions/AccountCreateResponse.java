@@ -1,7 +1,7 @@
 package org.hiero.sdk.simple.transactions;
 
-import com.hedera.hashgraph.sdk.AccountId;
 import org.hiero.sdk.simple.TransactionResponse;
+import org.hiero.sdk.simple.network.AccountId;
 
 public record AccountCreateResponse(AccountId accountId) implements TransactionResponse {
 }

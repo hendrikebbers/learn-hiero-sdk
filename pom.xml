@@ -13,6 +13,7 @@
   </properties>
 
   <modules>
+    <module>proto</module>
     <module>sdk</module>
     <module>sample</module>
   </modules>

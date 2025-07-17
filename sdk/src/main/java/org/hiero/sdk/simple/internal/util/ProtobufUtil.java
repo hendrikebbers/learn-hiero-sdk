@@ -36,7 +36,7 @@ public class ProtobufUtil {
             //TODO: Bad implemented in SDK
             // accountIdBuilder.setAlias(accountId.aliasKey.toProtobufKey().toByteString());
         } else if (accountId.evmAddress() != null) {
-            accountIdBuilder.setAlias(ByteString.copyFrom(accountId.evmAddress().toBytes()));
+            accountIdBuilder.setAlias(ByteString.copyFrom(accountId.evmAddress().bytes()));
         } else {
             accountIdBuilder.setAccountNum(accountId.num());
         }

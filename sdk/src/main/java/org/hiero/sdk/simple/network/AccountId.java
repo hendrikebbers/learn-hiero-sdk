@@ -1,8 +1,7 @@
 package org.hiero.sdk.simple.network;
 
-import com.hedera.hashgraph.sdk.EvmAddress;
-import com.hedera.hashgraph.sdk.PublicKey;
 import java.util.regex.Pattern;
+import org.hiero.sdk.simple.network.keys.PublicKey;
 
 public record AccountId(long shard,
                         long realm,

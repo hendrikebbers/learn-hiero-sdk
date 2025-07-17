@@ -1,13 +1,13 @@
 package org.hiero.sdk.simple.transactions;
 
 import com.hedera.hashgraph.sdk.proto.CryptoCreateTransactionBody;
-import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.TransactionBody.Builder;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
 import io.grpc.MethodDescriptor;
 import java.time.Duration;
 import org.hiero.sdk.simple.internal.AbstractTransaction;
+import org.hiero.sdk.simple.internal.grpc.CryptoServiceGrpc;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.Hbar;
