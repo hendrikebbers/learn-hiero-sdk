@@ -1,5 +1,7 @@
 package org.hiero.sdk.simple.sample;
 
+import static java.lang.System.Logger.Level.INFO;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.network.Account;
@@ -12,6 +14,8 @@ import org.hiero.sdk.simple.transactions.AccountCreateResponse;
 import org.hiero.sdk.simple.transactions.AccountCreateTransaction;
 
 public class Sample {
+
+    private final static System.Logger log = System.getLogger(Sample.class.getName());
 
     public static void main(String[] args) throws Exception {
         final Account operatorAccount = createOperatorAccount();
@@ -28,7 +32,7 @@ public class Sample {
                 .freezeTransaction(hieroClient)
                 .executeAndWait();
 
-        System.out.println("Transaction executed!");
+        log.log(INFO, "Transaction {0} executed", response.transactionId());
     }
 
     private static Account createOperatorAccount() {

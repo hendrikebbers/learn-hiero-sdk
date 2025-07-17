@@ -4,7 +4,7 @@ import java.time.Duration;
 import org.hiero.sdk.simple.network.Hbar;
 import org.jspecify.annotations.NonNull;
 
-public interface Transaction<T extends Transaction, R extends TransactionResponse> {
+public interface Transaction<T extends Transaction, R extends Response> {
 
     Hbar getFee();
 
@@ -24,5 +24,5 @@ public interface Transaction<T extends Transaction, R extends TransactionRespons
 
     T withMemo(String memo);
 
-    FrozenTransaction<R> freezeTransaction(@NonNull HieroClient client);
+    FrozenTransaction<T, R> freezeTransaction(@NonNull HieroClient client);
 }

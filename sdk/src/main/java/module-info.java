@@ -6,6 +6,7 @@ module org.hiero.sdk.simple {
     exports org.hiero.sdk.simple.network.settings.spi;
     exports org.hiero.sdk.simple.transactions;
     exports org.hiero.sdk.simple.grpc;
+    exports org.hiero.sdk.simple.transactions.spi;
 
     requires org.bouncycastle.provider;
     requires static org.jspecify;

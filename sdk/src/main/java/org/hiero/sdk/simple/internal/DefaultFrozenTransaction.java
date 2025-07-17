@@ -12,14 +12,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.function.UnaryOperator;
 import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
-import org.hiero.sdk.simple.TransactionResponse;
+import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.grpc.GrpcClient;
-import org.hiero.sdk.simple.grpc.ResponseFactory;
-import org.hiero.sdk.simple.internal.util.KeyUtils;
+import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.keys.PublicKey;
+import org.hiero.sdk.simple.transactions.spi.ResponseFactory;
+import org.hiero.sdk.simple.transactions.spi.TransactionFactory;
 import org.jspecify.annotations.NonNull;
 
-public class DefaultFrozenTransaction<R extends TransactionResponse> implements FrozenTransaction<R> {
+public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sdk.simple.Transaction> implements
+        FrozenTransaction<T, R> {
 
     private final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor;
 
@@ -29,16 +31,20 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
 
     private final HieroClient client;
 
+    private final TransactionFactory<T, R> transactionFactory;
+
     private final ResponseFactory<R> responseFactory;
 
     public DefaultFrozenTransaction(
             @NonNull final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor,
             @NonNull final TransactionBody transactionBody,
+            @NonNull final TransactionFactory<T, R> transactionFactory,
             @NonNull final ResponseFactory<R> responseFactory,
             @NonNull final HieroClient client) {
         this.methodDescriptor = Objects.requireNonNull(methodDescriptor, "methodDescriptor must not be null");
         this.transactionBody = Objects.requireNonNull(transactionBody, "transactionBody must not be null");
         this.client = Objects.requireNonNull(client, "client must not be null");
+        this.transactionFactory = Objects.requireNonNull(transactionFactory, "transactionFactory must not be null");
         this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
         if (client.signAutomaticallyWithOperator()) {
             sign(client.getOperatorAccount().privateKey());
@@ -69,7 +75,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
             }
-            return responseFactory.createResponse(response);
+            return responseFactory.createResponse(protobufTransaction, response);
         });
     }
 
@@ -85,7 +91,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
         }
         final SignatureMap.Builder signatureBuilder = SignatureMap.newBuilder();
         transactionSignatures.entrySet().forEach(entry -> {
-            signatureBuilder.addSigPair(KeyUtils.toSignaturePairProtobuf(entry.getKey(), entry.getValue()));
+            signatureBuilder.addSigPair(ProtobufUtil.toSignaturePairProtobuf(entry.getKey(), entry.getValue()));
         });
         return Transaction.newBuilder()
                 .setBodyBytes(transactionBody.toByteString())
@@ -93,4 +99,8 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
                 .build();
     }
 
+    @Override
+    public T unpack() {
+        return transactionFactory.unpack(transactionBody);
+    }
 }

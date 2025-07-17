@@ -6,16 +6,17 @@ import java.time.Duration;
 import java.util.Objects;
 import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
+import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.Transaction;
-import org.hiero.sdk.simple.TransactionResponse;
-import org.hiero.sdk.simple.grpc.ResponseFactory;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.TransactionId;
+import org.hiero.sdk.simple.transactions.spi.ResponseFactory;
+import org.hiero.sdk.simple.transactions.spi.TransactionFactory;
 import org.jspecify.annotations.NonNull;
 
-public abstract class AbstractTransaction<T extends Transaction, R extends TransactionResponse> implements
+public abstract class AbstractTransaction<T extends Transaction, R extends Response> implements
         Transaction<T, R> {
 
     private Hbar fee = Hbar.ZERO;
@@ -28,19 +29,24 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Trans
     protected abstract T self();
 
     @NonNull
-    protected abstract Class<R> getResponseType();
+    protected abstract TransactionFactory<T, R> getTransactionFactory();
+
+    @NonNull
+    protected abstract ResponseFactory<R> getResponseFactory();
 
     @NonNull
     protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> getMethodDescriptor();
 
     @Override
     @NonNull
-    public FrozenTransaction<R> freezeTransaction(@NonNull final HieroClient client) {
+    public FrozenTransaction<T, R> freezeTransaction(@NonNull final HieroClient client) {
         final AccountId nodeAccount = client.getNetworkSettings().getConsensusNodes().iterator().next().getAccountId();
         final TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
-        final ResponseFactory<R> responseFactory = ResponseFactory.forResponseType(getResponseType());
+        final TransactionFactory<T, R> transactionFactory = getTransactionFactory();
+        final ResponseFactory<R> responseFactory = getResponseFactory();
         final MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor = getMethodDescriptor();
-        return new DefaultFrozenTransaction(methodDescriptor, transactionBody, responseFactory, client);
+        return new DefaultFrozenTransaction(methodDescriptor, transactionBody, transactionFactory, responseFactory,
+                client);
     }
 
     @NonNull

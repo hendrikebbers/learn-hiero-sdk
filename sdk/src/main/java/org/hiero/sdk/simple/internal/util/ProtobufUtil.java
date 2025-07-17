@@ -2,6 +2,7 @@ package org.hiero.sdk.simple.internal.util;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.AccountID;
+import com.hedera.hashgraph.sdk.proto.SignaturePair;
 import com.hedera.hashgraph.sdk.proto.Timestamp;
 import com.hedera.hashgraph.sdk.proto.TimestampSeconds;
 import com.hedera.hashgraph.sdk.proto.TransactionID;
@@ -10,6 +11,10 @@ import java.time.Instant;
 import java.util.Objects;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.TransactionId;
+import org.hiero.sdk.simple.network.keys.Key;
+import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
+import org.hiero.sdk.simple.network.keys.KeyEncoding;
+import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
 public class ProtobufUtil {
@@ -32,14 +37,7 @@ public class ProtobufUtil {
         var accountIdBuilder = AccountID.newBuilder()
                 .setShardNum(accountId.shard())
                 .setRealmNum(accountId.realm());
-        if (accountId.aliasKey() != null) {
-            //TODO: Bad implemented in SDK
-            // accountIdBuilder.setAlias(accountId.aliasKey.toProtobufKey().toByteString());
-        } else if (accountId.evmAddress() != null) {
-            accountIdBuilder.setAlias(ByteString.copyFrom(accountId.evmAddress().bytes()));
-        } else {
-            accountIdBuilder.setAccountNum(accountId.num());
-        }
+        accountIdBuilder.setAccountNum(accountId.num());
         return accountIdBuilder.build();
     }
 
@@ -94,5 +92,52 @@ public class ProtobufUtil {
         return TimestampSeconds.newBuilder()
                 .setSeconds(instant.getEpochSecond())
                 .build();
+    }
+
+    public static com.hedera.hashgraph.sdk.proto.Key toKeyProtobuf(Key key) {
+        if (key instanceof PublicKey publicKey) {
+            if (publicKey.algorithm() == KeyAlgorithm.ECDSA) {
+                return com.hedera.hashgraph.sdk.proto.Key.newBuilder()
+                        .setECDSASecp256K1(ByteString.copyFrom(publicKey.toBytes(KeyEncoding.RAW)))
+                        .build();
+            } else {
+                return com.hedera.hashgraph.sdk.proto.Key.newBuilder()
+                        .setEd25519(ByteString.copyFrom(publicKey.toBytes(KeyEncoding.RAW)))
+                        .build();
+            }
+        } else {
+            throw new IllegalArgumentException("Unsupported key type: " + key.getClass().getName());
+        }
+    }
+
+    public static SignaturePair toSignaturePairProtobuf(PublicKey publicKey, byte[] signature) {
+        if (publicKey.algorithm() == KeyAlgorithm.ECDSA) {
+            return SignaturePair.newBuilder()
+                    .setPubKeyPrefix(ByteString.copyFrom(publicKey.toBytes(KeyEncoding.RAW)))
+                    .setECDSASecp256K1(ByteString.copyFrom(signature))
+                    .build();
+        } else {
+            return SignaturePair.newBuilder()
+                    .setPubKeyPrefix(ByteString.copyFrom(publicKey.toBytes(KeyEncoding.RAW)))
+                    .setEd25519(ByteString.copyFrom(signature))
+                    .build();
+        }
+    }
+
+    public static TransactionId fromProtobuf(TransactionID transactionID) {
+        var accountId = transactionID.hasAccountID() ? fromProtobuf(transactionID.getAccountID()) : null;
+        var validStart = transactionID.hasTransactionValidStart()
+                ? fromProtobuf(transactionID.getTransactionValidStart())
+                : null;
+        return new TransactionId(accountId, validStart);
+    }
+
+    private static AccountId fromProtobuf(AccountID accountID) {
+        Objects.requireNonNull(accountID);
+        return new AccountId(
+                accountID.getShardNum(),
+                accountID.getRealmNum(),
+                accountID.getAccountNum(),
+                null);
     }
 }

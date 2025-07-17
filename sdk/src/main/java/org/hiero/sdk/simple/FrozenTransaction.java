@@ -8,19 +8,20 @@ import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-public interface FrozenTransaction<R extends TransactionResponse> {
+public interface FrozenTransaction<T extends Transaction, R extends Response> {
 
     @NonNull
-    default FrozenTransaction<R> sign(@NonNull final PrivateKey privateKey) {
+    default FrozenTransaction<T, R> sign(@NonNull final PrivateKey privateKey) {
         Objects.requireNonNull(privateKey, "privateKey must not be null");
         return sign(privateKey.createPublicKey(), privateKey::sign);
     }
 
     @NonNull
-    FrozenTransaction<R> sign(@NonNull PublicKey publicKey, @NonNull UnaryOperator<byte[]> transactionSigner);
+    FrozenTransaction<T, R> sign(@NonNull PublicKey publicKey, @NonNull UnaryOperator<byte[]> transactionSigner);
 
     CompletableFuture<R> execute();
 
     R executeAndWait() throws ExecutionException, InterruptedException;
 
+    T unpack();
 }

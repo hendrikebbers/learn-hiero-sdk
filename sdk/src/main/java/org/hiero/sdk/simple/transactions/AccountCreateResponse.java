@@ -1,7 +1,7 @@
 package org.hiero.sdk.simple.transactions;
 
-import org.hiero.sdk.simple.TransactionResponse;
-import org.hiero.sdk.simple.network.AccountId;
+import org.hiero.sdk.simple.Response;
+import org.hiero.sdk.simple.network.TransactionId;
 
-public record AccountCreateResponse(AccountId accountId) implements TransactionResponse {
+public record AccountCreateResponse(TransactionId transactionId) implements Response {
 }

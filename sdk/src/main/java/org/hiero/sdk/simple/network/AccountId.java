@@ -1,14 +1,11 @@
 package org.hiero.sdk.simple.network;
 
 import java.util.regex.Pattern;
-import org.hiero.sdk.simple.network.keys.PublicKey;
 
 public record AccountId(long shard,
                         long realm,
                         long num,
-                        String checksum,
-                        PublicKey aliasKey,
-                        EvmAddress evmAddress) {
+                        String checksum) {
 
     private static final Pattern ENTITY_ID_REGEX =
             Pattern.compile("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-([a-z]{5}))?$");
@@ -23,10 +20,13 @@ public record AccountId(long shard,
                     Long.parseLong(match.group(1)),
                     Long.parseLong(match.group(2)),
                     Long.parseLong(match.group(3)),
-                    match.group(4),
-                    null,
-                    null);
+                    match.group(4));
         }
         throw new IllegalArgumentException("Invalid Account ID '" + id + "'");
+    }
+
+    @Override
+    public String toString() {
+        return shard + "." + realm + "." + num;
     }
 }
