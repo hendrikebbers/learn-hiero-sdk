@@ -44,8 +44,8 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
             transaction.setMemo(transactionBody.getMemo());
             transaction.setInitialBalance(Hbar.of(cryptoCreateBody.getInitialBalance(), HbarUnit.TINYBAR));
             transaction.setAccountMemo(cryptoCreateBody.getMemo());
-            throw new RuntimeException("cryptoCreateBody.getKey() conversion currently not supported");
-            //return transaction;
+            // TODO: cryptoCreateBody.getKey() conversion currently not supported
+            return transaction;
         };
     }
 
