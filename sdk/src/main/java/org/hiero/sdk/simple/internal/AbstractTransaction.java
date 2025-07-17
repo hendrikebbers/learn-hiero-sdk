@@ -1,6 +1,5 @@
 package org.hiero.sdk.simple.internal;
 
-import com.hedera.hashgraph.sdk.Hbar;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import io.grpc.MethodDescriptor;
 import java.time.Duration;
@@ -12,6 +11,7 @@ import org.hiero.sdk.simple.TransactionResponse;
 import org.hiero.sdk.simple.grpc.ResponseFactory;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.AccountId;
+import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.TransactionId;
 import org.jspecify.annotations.NonNull;
 
@@ -51,7 +51,7 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Trans
         final TransactionBody.Builder builder = TransactionBody.newBuilder()
                 .setTransactionID(ProtobufUtil.toProtobuf(transactionId))
                 .setNodeAccountID(ProtobufUtil.toProtobuf(nodeAccount))
-                .setTransactionFee(fee.toTinybars())
+                .setTransactionFee(fee.tinybar())
                 .setTransactionValidDuration(ProtobufUtil.toProtobuf(validDuration).toBuilder())
                 .setMemo(memo);
         updateBodyBuilderWithSpecifics(builder);

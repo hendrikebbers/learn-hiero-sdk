@@ -1,6 +1,5 @@
 package org.hiero.sdk.simple.transactions;
 
-import com.hedera.hashgraph.sdk.Hbar;
 import com.hedera.hashgraph.sdk.proto.CryptoCreateTransactionBody;
 import com.hedera.hashgraph.sdk.proto.CryptoServiceGrpc;
 import com.hedera.hashgraph.sdk.proto.Transaction;
@@ -11,6 +10,7 @@ import java.time.Duration;
 import org.hiero.sdk.simple.internal.AbstractTransaction;
 import org.hiero.sdk.simple.internal.util.KeyUtils;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
+import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.keys.Key;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -42,7 +42,7 @@ public class AccountCreateTransaction extends AbstractTransaction<AccountCreateT
     @Override
     protected void updateBodyBuilderWithSpecifics(Builder builder) {
         final CryptoCreateTransactionBody.Builder cryptoCreateBuilder = CryptoCreateTransactionBody.newBuilder();
-        cryptoCreateBuilder.setInitialBalance(initialBalance != null ? initialBalance.toTinybars() : 0);
+        cryptoCreateBuilder.setInitialBalance(initialBalance != null ? initialBalance.tinybar() : 0);
         cryptoCreateBuilder.setMemo(accountMemo);
         cryptoCreateBuilder.setKey(KeyUtils.toKeyProtobuf(key));
         cryptoCreateBuilder.setAutoRenewPeriod(ProtobufUtil.toProtobuf(Duration.ofDays(90)));

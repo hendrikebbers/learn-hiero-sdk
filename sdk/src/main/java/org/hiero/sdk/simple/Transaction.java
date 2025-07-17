@@ -1,7 +1,7 @@
 package org.hiero.sdk.simple;
 
-import com.hedera.hashgraph.sdk.Hbar;
 import java.time.Duration;
+import org.hiero.sdk.simple.network.Hbar;
 import org.jspecify.annotations.NonNull;
 
 public interface Transaction<T extends Transaction, R extends TransactionResponse> {

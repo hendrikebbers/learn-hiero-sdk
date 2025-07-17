@@ -1,10 +1,10 @@
 package org.hiero.sdk.simple.sample;
 
-import com.hedera.hashgraph.sdk.Hbar;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.network.Account;
 import org.hiero.sdk.simple.network.AccountId;
+import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
@@ -21,10 +21,10 @@ public class Sample {
 
         final AccountCreateResponse response = new AccountCreateTransaction()
                 .withKey(publicKeyForNewAccount)
-                .withFee(Hbar.from(10))
+                .withFee(Hbar.of(10))
                 .withMemo("Sample account creation")
                 .withAccountMemo("Sample account memo")
-                .withInitialBalance(Hbar.from(2))
+                .withInitialBalance(Hbar.of(2))
                 .freezeTransaction(hieroClient)
                 .executeAndWait();
 
