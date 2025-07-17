@@ -41,7 +41,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
         this.client = Objects.requireNonNull(client, "client must not be null");
         this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
         if (client.signAutomaticallyWithOperator()) {
-            sign(client.getOperatorAccount());
+            sign(client.getOperatorAccount().privateKey());
         }
     }
 
@@ -63,7 +63,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
     @Override
     public CompletableFuture<R> execute() {
         Objects.requireNonNull(client, "client must not be null");
-        final com.hedera.hashgraph.sdk.proto.Transaction protobufTransaction = createProtobufTransaction();
+        final Transaction protobufTransaction = createProtobufTransaction();
         final GrpcClient grpcClient = client.getGrpcClient();
         return grpcClient.sendTransaction(protobufTransaction, methodDescriptor).handle((response, throwable) -> {
             if (throwable != null) {
@@ -78,7 +78,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
         return execute().get();
     }
 
-    private com.hedera.hashgraph.sdk.proto.Transaction createProtobufTransaction() {
+    private Transaction createProtobufTransaction() {
         if (transactionBody == null) {
             throw new IllegalStateException(
                     "transaction body is not built; call freeze() before creating protobuf transaction");
@@ -87,7 +87,7 @@ public class DefaultFrozenTransaction<R extends TransactionResponse> implements 
         transactionSignatures.entrySet().forEach(entry -> {
             signatureBuilder.addSigPair(KeyUtils.toSignaturePairProtobuf(entry.getKey(), entry.getValue()));
         });
-        return com.hedera.hashgraph.sdk.proto.Transaction.newBuilder()
+        return Transaction.newBuilder()
                 .setBodyBytes(transactionBody.toByteString())
                 .setSigMap(signatureBuilder.build())
                 .build();
