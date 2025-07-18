@@ -1,7 +1,6 @@
 package org.hiero.sdk.simple.internal.grpc;
 
-import com.hedera.hashgraph.sdk.proto.Transaction;
-import com.hedera.hashgraph.sdk.proto.TransactionResponse;
+import com.google.protobuf.MessageLite;
 import io.grpc.CallOptions;
 import io.grpc.Channel;
 import io.grpc.ClientCall;
@@ -27,17 +26,17 @@ public class GrpcClientImpl implements GrpcClient {
         this.channel = Objects.requireNonNull(channel, "channel must not be null");
     }
 
-    public CompletableFuture<TransactionResponse> sendTransaction(@NonNull final Transaction transaction,
-            @NonNull final MethodDescriptor<Transaction, TransactionResponse> methodDescriptor) {
-        Objects.requireNonNull(transaction, "transaction must not be null");
+    @Override
+    public <I extends MessageLite, O extends MessageLite> CompletableFuture<O> call(
+            MethodDescriptor<I, O> methodDescriptor, I input) {
         Objects.requireNonNull(methodDescriptor, "methodDescriptor must not be null");
-        final CompletableFuture<TransactionResponse> future = new CompletableFuture<>();
-        final ClientCall<Transaction, TransactionResponse> call = channel.newCall(methodDescriptor,
+        final CompletableFuture<O> future = new CompletableFuture<>();
+        final ClientCall<I, O> call = channel.newCall(methodDescriptor,
                 CallOptions.DEFAULT);
         call.start(new Listener<>() {
 
             @Override
-            public void onMessage(TransactionResponse response) {
+            public void onMessage(O response) {
                 future.complete(response);
             }
 
@@ -49,7 +48,7 @@ public class GrpcClientImpl implements GrpcClient {
                 }
             }
         }, new Metadata());
-        call.sendMessage(transaction);
+        call.sendMessage(input);
         call.halfClose();
         call.request(1);
         return future;

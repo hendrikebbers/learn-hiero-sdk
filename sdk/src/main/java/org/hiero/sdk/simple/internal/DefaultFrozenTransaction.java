@@ -71,7 +71,7 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
         Objects.requireNonNull(client, "client must not be null");
         final Transaction protobufTransaction = createProtobufTransaction();
         final GrpcClient grpcClient = client.getGrpcClient();
-        return grpcClient.sendTransaction(protobufTransaction, methodDescriptor).handle((response, throwable) -> {
+        return grpcClient.call(methodDescriptor, protobufTransaction).handle((response, throwable) -> {
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
             }

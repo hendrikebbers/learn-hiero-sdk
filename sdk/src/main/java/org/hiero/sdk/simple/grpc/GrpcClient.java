@@ -1,12 +1,12 @@
 package org.hiero.sdk.simple.grpc;
 
-import com.hedera.hashgraph.sdk.proto.Transaction;
-import com.hedera.hashgraph.sdk.proto.TransactionResponse;
+import com.google.protobuf.MessageLite;
 import io.grpc.MethodDescriptor;
 import java.util.concurrent.CompletableFuture;
 
 public interface GrpcClient {
 
-    CompletableFuture<TransactionResponse> sendTransaction(Transaction request,
-            MethodDescriptor<Transaction, TransactionResponse> methodDescriptor);
+    <I extends MessageLite, O extends MessageLite> CompletableFuture<O> call(
+            MethodDescriptor<I, O> methodDescriptor, I input);
+
 }

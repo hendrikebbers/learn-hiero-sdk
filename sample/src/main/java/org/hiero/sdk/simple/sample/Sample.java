@@ -31,8 +31,11 @@ public class Sample {
                 .withInitialBalance(Hbar.of(2))
                 .freezeTransaction(hieroClient)
                 .executeAndWait();
+        log.log(INFO, "Transaction {0} send", response.transactionId());
 
-        log.log(INFO, "Transaction {0} executed", response.transactionId());
+        // final Receipt receipt = response.getReceipt(hieroClient).get();
+        // log.log(INFO, "Transaction {0} executed", receipt.transactionId());
+
     }
 
     private static Account createOperatorAccount() {

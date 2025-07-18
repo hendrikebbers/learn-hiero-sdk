@@ -20,7 +20,8 @@ import org.hiero.sdk.simple.transactions.spi.TransactionFactory;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class AccountCreateTransaction extends AbstractTransaction<AccountCreateTransaction, AccountCreateResponse> {
+public final class AccountCreateTransaction extends
+        AbstractTransaction<AccountCreateTransaction, AccountCreateResponse> {
 
     private String accountMemo;
 
