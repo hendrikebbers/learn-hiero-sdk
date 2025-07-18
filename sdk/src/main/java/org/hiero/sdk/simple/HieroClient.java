@@ -19,17 +19,22 @@ public interface HieroClient {
     @NonNull
     GrpcClient getGrpcClient();
 
+    @NonNull
     Account getOperatorAccount();
 
+    @NonNull
     NetworkSettings getNetworkSettings();
 
-    static HieroClient create(@NonNull Account operatorAccount, @NonNull NetworkSettings networkSettings) {
+    @NonNull
+    static HieroClient create(@NonNull final Account operatorAccount, @NonNull final NetworkSettings networkSettings) {
         return new HieroClientImpl(operatorAccount, networkSettings);
     }
 
-    static HieroClient create(@NonNull Account operatorAccount, @NonNull String networkIdentifier) {
-        return new HieroClientImpl(operatorAccount, NetworkSettings.forIdentifier(networkIdentifier)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid network identifier: " + networkIdentifier)));
+    @NonNull
+    static HieroClient create(@NonNull final Account operatorAccount, @NonNull final String networkIdentifier) {
+        final NetworkSettings networkSettings = NetworkSettings.forIdentifier(networkIdentifier)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid network identifier: " + networkIdentifier));
+        return new HieroClientImpl(operatorAccount, networkSettings);
     }
 
     default long getDefaultTimeoutInMs() {

@@ -64,43 +64,57 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Respo
         return builder.build();
     }
 
-    protected abstract void updateBodyBuilderWithSpecifics(TransactionBody.Builder builder);
+    protected abstract void updateBodyBuilderWithSpecifics(TransactionBody.@NonNull Builder builder);
 
+    @NonNull
     public Hbar getFee() {
         return fee;
     }
 
-    public void setFee(Hbar fee) {
+    public void setFee(@NonNull final Hbar fee) {
+        Objects.requireNonNull(fee, "fee must not be null");
+        if (fee.isNegative()) {
+            throw new IllegalArgumentException("fee must be non-negative");
+        }
         this.fee = fee;
     }
 
-    public T withFee(Hbar fee) {
+    public T withFee(@NonNull final Hbar fee) {
         setFee(fee);
         return self();
     }
 
+    @NonNull
     public Duration getValidDuration() {
         return validDuration;
     }
 
-    public void setValidDuration(Duration validDuration) {
+    public void setValidDuration(@NonNull final Duration validDuration) {
+        Objects.requireNonNull(validDuration, "validDuration must not be null");
+        if (validDuration.isNegative() || validDuration.isZero()) {
+            throw new IllegalArgumentException("validDuration must be positive");
+        }
         this.validDuration = validDuration;
     }
 
-    public T withValidDuration(Duration validDuration) {
+    @NonNull
+    public T withValidDuration(@NonNull final Duration validDuration) {
         setValidDuration(validDuration);
         return self();
     }
 
+    @NonNull
     public String getMemo() {
         return memo;
     }
 
-    public void setMemo(String memo) {
+    public void setMemo(@NonNull final String memo) {
+        Objects.requireNonNull(memo, "memo must not be null");
         this.memo = memo;
     }
 
-    public T withMemo(String memo) {
+    @NonNull
+    public T withMemo(@NonNull final String memo) {
         setMemo(memo);
         return self();
     }

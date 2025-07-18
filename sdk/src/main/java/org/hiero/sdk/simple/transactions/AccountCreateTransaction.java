@@ -70,7 +70,8 @@ public final class AccountCreateTransaction extends
     }
 
     @Override
-    protected void updateBodyBuilderWithSpecifics(Builder builder) {
+    protected void updateBodyBuilderWithSpecifics(@NonNull final Builder builder) {
+        Objects.requireNonNull(builder, "builder must not be null");
         final CryptoCreateTransactionBody.Builder cryptoCreateBuilder = CryptoCreateTransactionBody.newBuilder();
         cryptoCreateBuilder.setInitialBalance(initialBalance != null ? initialBalance.tinybar() : 0);
         cryptoCreateBuilder.setMemo(accountMemo);

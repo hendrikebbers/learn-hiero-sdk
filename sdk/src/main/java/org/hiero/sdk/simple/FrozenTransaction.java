@@ -32,7 +32,6 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
         return send().get(timeout, unit);
     }
 
-
     R sendAndWait() throws ExecutionException, InterruptedException, TimeoutException;
 
     T unpack();

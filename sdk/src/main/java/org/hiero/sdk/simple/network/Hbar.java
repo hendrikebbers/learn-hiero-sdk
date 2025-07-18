@@ -35,4 +35,8 @@ public record Hbar(long tinybar) implements Comparable<Hbar> {
         Objects.requireNonNull(unit, "unit must not be null");
         return new Hbar(value * unit.getInTinybar());
     }
+
+    public boolean isNegative() {
+        return tinybar < 0;
+    }
 }
