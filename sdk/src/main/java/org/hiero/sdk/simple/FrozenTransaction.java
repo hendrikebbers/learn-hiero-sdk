@@ -3,6 +3,8 @@ package org.hiero.sdk.simple;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
@@ -19,9 +21,19 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
     @NonNull
     FrozenTransaction<T, R> sign(@NonNull PublicKey publicKey, @NonNull UnaryOperator<byte[]> transactionSigner);
 
-    CompletableFuture<R> execute();
+    CompletableFuture<R> send();
 
-    R executeAndWait() throws ExecutionException, InterruptedException;
+    default R sendAndWait(long timeout, TimeUnit unit)
+            throws ExecutionException, InterruptedException, TimeoutException {
+        Objects.requireNonNull(unit, "unit must not be null");
+        if (timeout < 0) {
+            throw new IllegalArgumentException("timeout must be non-negative");
+        }
+        return send().get(timeout, unit);
+    }
+
+
+    R sendAndWait() throws ExecutionException, InterruptedException, TimeoutException;
 
     T unpack();
 }

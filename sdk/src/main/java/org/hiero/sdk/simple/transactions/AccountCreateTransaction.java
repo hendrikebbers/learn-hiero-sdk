@@ -8,6 +8,7 @@ import com.hedera.hashgraph.sdk.proto.TransactionBody.Builder;
 import com.hedera.hashgraph.sdk.proto.TransactionResponse;
 import io.grpc.MethodDescriptor;
 import java.time.Duration;
+import java.util.Objects;
 import org.hiero.sdk.simple.internal.AbstractTransaction;
 import org.hiero.sdk.simple.internal.grpc.CryptoServiceGrpc;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
@@ -23,9 +24,9 @@ import org.jspecify.annotations.Nullable;
 public final class AccountCreateTransaction extends
         AbstractTransaction<AccountCreateTransaction, AccountCreateResponse> {
 
-    private String accountMemo;
+    private String accountMemo = "";
 
-    private Hbar initialBalance;
+    private Hbar initialBalance = Hbar.ZERO;
 
     private Key key;
 
@@ -52,11 +53,11 @@ public final class AccountCreateTransaction extends
 
     @Override
     protected @NonNull ResponseFactory<AccountCreateResponse> getResponseFactory() {
-        return (protoTransaction, protoResponse) -> {
+        return (client, protoTransaction, protoResponse) -> {
             try {
                 final TransactionBody body = TransactionBody.parseFrom(protoTransaction.getBodyBytes());
                 final TransactionId transactionId = ProtobufUtil.fromProtobuf(body.getTransactionID());
-                return new AccountCreateResponse(transactionId);
+                return new AccountCreateResponse(client, transactionId);
             } catch (InvalidProtocolBufferException e) {
                 throw new RuntimeException(e);
             }
@@ -83,7 +84,8 @@ public final class AccountCreateTransaction extends
         return accountMemo;
     }
 
-    public void setAccountMemo(final @Nullable String accountMemo) {
+    public void setAccountMemo(final @NonNull String accountMemo) {
+        Objects.requireNonNull(accountMemo, "accountMemo must not be null");
         this.accountMemo = accountMemo;
     }
 
@@ -98,7 +100,8 @@ public final class AccountCreateTransaction extends
         return initialBalance;
     }
 
-    public void setInitialBalance(final @Nullable Hbar initialBalance) {
+    public void setInitialBalance(final @NonNull Hbar initialBalance) {
+        Objects.requireNonNull(initialBalance, "initialBalance must not be null");
         this.initialBalance = initialBalance;
     }
 

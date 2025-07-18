@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
 import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
@@ -46,7 +48,7 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
         this.client = Objects.requireNonNull(client, "client must not be null");
         this.transactionFactory = Objects.requireNonNull(transactionFactory, "transactionFactory must not be null");
         this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
-        if (client.signAutomaticallyWithOperator()) {
+        if (client.signTransactionsAutomaticallyWithOperator()) {
             sign(client.getOperatorAccount().privateKey());
         }
     }
@@ -67,7 +69,7 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
     }
 
     @Override
-    public CompletableFuture<R> execute() {
+    public CompletableFuture<R> send() {
         Objects.requireNonNull(client, "client must not be null");
         final Transaction protobufTransaction = createProtobufTransaction();
         final GrpcClient grpcClient = client.getGrpcClient();
@@ -75,13 +77,14 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
             }
-            return responseFactory.createResponse(protobufTransaction, response);
+            return responseFactory.createResponse(client, protobufTransaction, response);
         });
     }
 
     @Override
-    public R executeAndWait() throws ExecutionException, InterruptedException {
-        return execute().get();
+    public R sendAndWait() throws ExecutionException, InterruptedException, TimeoutException {
+        final long timeout = client.getDefaultTimeoutInMs();
+        return send().get(timeout, TimeUnit.MILLISECONDS);
     }
 
     private Transaction createProtobufTransaction() {

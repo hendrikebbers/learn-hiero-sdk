@@ -1,6 +1,7 @@
 package org.hiero.sdk.simple.network;
 
 import java.util.Objects;
+import org.hiero.sdk.simple.network.keys.KeyPair;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
@@ -18,6 +19,10 @@ public record Account(@NonNull AccountId accountId, @NonNull PublicKey publicKey
         Objects.requireNonNull(accountId, "newAccountId must not be null");
         Objects.requireNonNull(publicKey, "publicKey must not be null");
         Objects.requireNonNull(privateKey, "privateKey must not be null");
+    }
+
+    public KeyPair keyPair() {
+        return new KeyPair(privateKey, publicKey);
     }
 
     /**

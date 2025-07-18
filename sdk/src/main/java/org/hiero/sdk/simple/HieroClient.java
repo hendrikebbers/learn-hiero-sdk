@@ -9,7 +9,7 @@ import org.jspecify.annotations.NonNull;
 
 public interface HieroClient {
 
-    default boolean signAutomaticallyWithOperator() {
+    default boolean signTransactionsAutomaticallyWithOperator() {
         return true;
     }
 
@@ -32,4 +32,7 @@ public interface HieroClient {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid network identifier: " + networkIdentifier)));
     }
 
+    default long getDefaultTimeoutInMs() {
+        return 30_000; // 30 seconds
+    }
 }

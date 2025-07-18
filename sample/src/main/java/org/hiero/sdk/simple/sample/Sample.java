@@ -8,6 +8,7 @@ import org.hiero.sdk.simple.network.Account;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
+import org.hiero.sdk.simple.network.keys.KeyPair;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.hiero.sdk.simple.transactions.AccountCreateResponse;
@@ -21,19 +22,16 @@ public class Sample {
         final Account operatorAccount = createOperatorAccount();
         final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
 
-        final PublicKey publicKeyForNewAccount = PrivateKey.generate(KeyAlgorithm.ED25519).createPublicKey();
+        final PublicKey publicKeyForNewAccount = KeyPair.generate(KeyAlgorithm.ED25519).publicKey();
 
         final AccountCreateResponse response = new AccountCreateTransaction()
                 .withKey(publicKeyForNewAccount)
-                .withFee(Hbar.of(10))
-                .withMemo("Sample account creation")
-                .withAccountMemo("Sample account memo")
                 .withInitialBalance(Hbar.of(2))
                 .freezeTransaction(hieroClient)
-                .executeAndWait();
+                .sendAndWait();
         log.log(INFO, "Transaction {0} send", response.transactionId());
 
-        // final Receipt receipt = response.getReceipt(hieroClient).get();
+        // final Receipt receipt = response.getReceiptAndWait();
         // log.log(INFO, "Transaction {0} executed", receipt.transactionId());
 
     }

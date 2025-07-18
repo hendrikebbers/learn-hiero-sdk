@@ -5,7 +5,11 @@ import com.hedera.hashgraph.sdk.proto.QueryHeader;
 import com.hedera.hashgraph.sdk.proto.ResponseType;
 import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptQuery;
 import io.grpc.MethodDescriptor;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Receipt;
 import org.hiero.sdk.simple.Response;
@@ -16,10 +20,13 @@ import org.jspecify.annotations.NonNull;
 
 public abstract class AbstractResponse implements Response {
 
+    private final HieroClient client;
+
     private final TransactionId transactionId;
 
-    public AbstractResponse(TransactionId transactionId) {
-        this.transactionId = transactionId;
+    public AbstractResponse(@NonNull final HieroClient client, @NonNull final TransactionId transactionId) {
+        this.client = Objects.requireNonNull(client, "client must not be null");
+        this.transactionId = Objects.requireNonNull(transactionId, "transactionId must not be null");
     }
 
     @Override
@@ -28,7 +35,7 @@ public abstract class AbstractResponse implements Response {
     }
 
     @Override
-    public CompletableFuture<Receipt> getReceipt(@NonNull final HieroClient client) {
+    public CompletableFuture<Receipt> getReceipt() {
         final QueryHeader header = QueryHeader.newBuilder()
                 .setResponseType(ResponseType.ANSWER_ONLY)
                 .build();
@@ -46,5 +53,12 @@ public abstract class AbstractResponse implements Response {
             }
             throw new RuntimeException("Not implemented");
         });
+    }
+
+    @Override
+    public Receipt getReceiptAndWait()
+            throws InterruptedException, ExecutionException, TimeoutException {
+        final long defaultTimeoutInMs = client.getDefaultTimeoutInMs();
+        return getReceiptAndWait(defaultTimeoutInMs, TimeUnit.MILLISECONDS);
     }
 }
