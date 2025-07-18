@@ -3,18 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.hiero</groupId>
-    <artifactId>learn-hiero-sdk</artifactId>
+    <groupId>com.open-elements</groupId>
+    <artifactId>hiero-sdk-java-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
 
-  <artifactId>learn-hiero-sdk-sdk</artifactId>
+  <artifactId>hiero-sdk-java</artifactId>
 
 
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>learn-hiero-sdk-proto</artifactId>
+      <artifactId>hiero-sdk-java-protobuf</artifactId>
       <version>${version}</version>
     </dependency>
     <dependency>
