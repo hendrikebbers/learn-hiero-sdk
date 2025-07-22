@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
-import org.hiero.sdk.simple.network.keys.PrivateKey;
+import org.hiero.sdk.simple.network.keys.KeyPair;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
@@ -21,14 +21,14 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
     /**
      * Signs the transaction with the given private key.
      *
-     * @param privateKey the private key to sign the transaction with
+     * @param keyPair the key pair containing the public and private keys to sign the transaction with
      * @return a new {@link FrozenTransaction} instance with the signature applied
      * @throws NullPointerException if {@code privateKey} is null
      */
     @NonNull
-    default FrozenTransaction<T, R> sign(@NonNull final PrivateKey privateKey) {
-        Objects.requireNonNull(privateKey, "privateKey must not be null");
-        return sign(privateKey.createPublicKey(), privateKey::sign);
+    default FrozenTransaction<T, R> sign(@NonNull final KeyPair keyPair) {
+        Objects.requireNonNull(keyPair, "keyPair must not be null");
+        return sign(keyPair.publicKey(), keyPair.privateKey()::sign);
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.hiero.sdk.simple.network.keys;
 
+import org.jspecify.annotations.NonNull;
+
 /**
  * Represents a public key in the Hiero network.
  */
@@ -12,6 +14,6 @@ public interface PublicKey extends Key {
      * @param signature the signature to verify
      * @return true if the signature is valid for the message, false otherwise
      */
-    boolean verify(byte[] message, byte[] signature);
+    boolean verify(@NonNull byte[] message, @NonNull byte[] signature);
 
 }
