@@ -34,6 +34,14 @@ public class Sample {
         // final Receipt receipt = response.getReceiptAndWait();
         // log.log(INFO, "Transaction {0} executed", receipt.transactionId());
 
+        new AccountCreateTransaction()
+                .withKey(publicKeyForNewAccount)
+                .withInitialBalance(Hbar.of(2))
+                .withKey(publicKeyForNewAccount)
+                .freezeTransaction(hieroClient)
+                .sendAndWait();
+
+
     }
 
     private static Account createOperatorAccount() {

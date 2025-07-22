@@ -1,6 +1,6 @@
 package org.hiero.sdk.simple.network.keys;
 
-import org.hiero.sdk.simple.internal.network.key.KeyFactory;
+import org.hiero.sdk.simple.internal.network.key.PrivateKeyFactory;
 
 /**
  * Represents a private cryptographic key used in the Hiero network.
@@ -29,7 +29,7 @@ public interface PrivateKey extends Key {
      * @return a new private key
      */
     static PrivateKey generate(KeyAlgorithm algorithm) {
-        return KeyFactory.createPrivateKey(algorithm);
+        return PrivateKeyFactory.createPrivateKey(algorithm);
     }
 
     //TODO: Do we really want to have that method without the definition of the KeyAlgorithm and KeyEncoding?
@@ -41,6 +41,6 @@ public interface PrivateKey extends Key {
      * @return the private key
      */
     static PrivateKey fromString(String privateKey) {
-        return KeyFactory.createPrivateKeyFromString(privateKey);
+        return PrivateKeyFactory.createPrivate(privateKey);
     }
 }
