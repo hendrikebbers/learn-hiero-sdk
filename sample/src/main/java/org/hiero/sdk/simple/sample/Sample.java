@@ -47,8 +47,8 @@ public class Sample {
     private static Account createOperatorAccount() {
         // Load environment variables from .env file
         final Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
-        final AccountId operatorAccountId = AccountId.fromString(dotenv.get("OPERATOR_ACCOUNT_ID"));
-        final PrivateKey operatorPrivateKey = PrivateKey.fromString(dotenv.get("OPERATOR_PRIVATE_KEY"));
+        final AccountId operatorAccountId = AccountId.from(dotenv.get("OPERATOR_ACCOUNT_ID"));
+        final PrivateKey operatorPrivateKey = PrivateKey.from(dotenv.get("OPERATOR_PRIVATE_KEY"));
         return Account.of(operatorAccountId, operatorPrivateKey);
     }
 }

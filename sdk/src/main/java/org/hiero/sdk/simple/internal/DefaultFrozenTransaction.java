@@ -49,7 +49,7 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
         this.transactionFactory = Objects.requireNonNull(transactionFactory, "transactionFactory must not be null");
         this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
         if (client.signTransactionsAutomaticallyWithOperator()) {
-            sign(client.getOperatorAccount().privateKey());
+            sign(client.getOperatorAccount().keyPair());
         }
     }
 

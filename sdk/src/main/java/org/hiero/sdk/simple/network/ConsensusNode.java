@@ -21,6 +21,6 @@ public record ConsensusNode(@NonNull String ip, @NonNull String port, @NonNull S
      */
     @NonNull
     public AccountId getAccountId() {
-        return AccountId.fromString(account);
+        return AccountId.from(account);
     }
 }
