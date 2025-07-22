@@ -1,6 +1,7 @@
 package org.hiero.sdk.simple.network.keys;
 
-import org.hiero.sdk.simple.internal.network.key.PrivateKeyFactory;
+import org.bouncycastle.util.encoders.Hex;
+import org.hiero.sdk.simple.internal.network.key.KeyFactory;
 import org.jspecify.annotations.NonNull;
 
 /**
@@ -35,6 +36,10 @@ public interface PrivateKey extends Key {
     @NonNull
     byte[] sign(@NonNull byte[] message);
 
+    default java.security.@NonNull PrivateKey toJavaKey(@NonNull final KeyEncoding encoding) {
+        return KeyFactory.toJavaPrivateKey(this, encoding);
+    }
+
     /**
      * Generates a new private key using the specified algorithm.
      *
@@ -43,7 +48,7 @@ public interface PrivateKey extends Key {
      */
     @NonNull
     static PrivateKey generate(KeyAlgorithm algorithm) {
-        return PrivateKeyFactory.createPrivateKey(algorithm);
+        return KeyFactory.createPrivateKey(algorithm);
     }
 
     /**
@@ -54,7 +59,21 @@ public interface PrivateKey extends Key {
      */
     //TODO: Do we really want to have that method without the definition of the KeyAlgorithm and KeyEncoding?
     @NonNull
-    static PrivateKey fromString(String privateKey) {
-        return PrivateKeyFactory.createPrivate(privateKey);
+    static PrivateKey from(String privateKey) {
+        final byte[] privateKeyBytes = Hex.decode(
+                privateKey.startsWith("0x") ? privateKey.substring(2) : privateKey);
+        return from(privateKeyBytes);
     }
+
+    //TODO: Do we really want to have that method without the definition of the KeyAlgorithm and KeyEncoding?
+    @NonNull
+    static PrivateKey from(byte[] privateKey) {
+        return KeyFactory.createPrivateKey(privateKey);
+    }
+
+    @NonNull
+    static PrivateKey from(java.security.@NonNull PrivateKey privateKey) {
+        return KeyFactory.createPrivateKey(privateKey);
+    }
+
 }

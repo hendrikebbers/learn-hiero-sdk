@@ -23,4 +23,6 @@ public interface Key {
      */
     @NonNull
     KeyAlgorithm algorithm();
+
+    java.security.@NonNull Key toJavaKey(@NonNull final KeyEncoding encoding);
 }

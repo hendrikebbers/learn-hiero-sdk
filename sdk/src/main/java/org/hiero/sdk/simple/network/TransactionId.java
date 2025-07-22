@@ -2,8 +2,14 @@ package org.hiero.sdk.simple.network;
 
 import java.time.Instant;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
+import org.hiero.sdk.simple.HieroClient;
+import org.hiero.sdk.simple.Receipt;
 import org.jspecify.annotations.NonNull;
 
 public record TransactionId(@NonNull AccountId accountId, @NonNull Instant validStart) {
@@ -21,6 +27,24 @@ public record TransactionId(@NonNull AccountId accountId, @NonNull Instant valid
         Objects.requireNonNull(validStart, "validStart must not be null");
     }
 
+    public CompletableFuture<Receipt> getReceipt(HieroClient client) {
+        throw new UnsupportedOperationException("getReceipt is not implemented for TransactionId");
+    }
+
+    public Receipt getReceiptAndWait(HieroClient client, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Objects.requireNonNull(unit, "unit must not be null");
+        if (timeout < 0) {
+            throw new IllegalArgumentException("timeout must be non-negative");
+        }
+        return getReceipt(client).get(timeout, unit);
+    }
+
+    public Receipt getReceiptAndWait(HieroClient client)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        return getReceiptAndWait(client, client.getDefaultTimeoutInMs(), TimeUnit.SECONDS);
+    }
+
     public String toString() {
         if (accountId != null && validStart != null) {
             return "" + accountId + "@" + validStart.getEpochSecond() + "." + String.format("%09d",
@@ -30,6 +54,7 @@ public record TransactionId(@NonNull AccountId accountId, @NonNull Instant valid
         }
     }
 
+    @NonNull
     public static TransactionId generate(@NonNull final AccountId accountId) {
         Objects.requireNonNull(accountId, "accountId must not be null");
 
@@ -59,5 +84,23 @@ public record TransactionId(@NonNull AccountId accountId, @NonNull Instant valid
                 accountId,
                 Instant.ofEpochSecond(
                         0, currentTime + ThreadLocalRandom.current().nextLong(1_000)));
+    }
+
+    @NonNull
+    public static TransactionId from(@NonNull final String transactionId) {
+        Objects.requireNonNull(transactionId, "transactionId must not be null");
+        final String[] parts = transactionId.split("@");
+        if (parts.length != 2) {
+            throw new IllegalArgumentException("Invalid transaction ID format: " + transactionId);
+        }
+        final AccountId accountId = AccountId.from(parts[0]);
+        final String[] timeParts = parts[1].split("\\.");
+        if (timeParts.length != 2) {
+            throw new IllegalArgumentException("Invalid timestamp format in transaction ID: " + transactionId);
+        }
+        final long epochSecond = Long.parseLong(timeParts[0]);
+        final int nanoAdjustment = Integer.parseInt(timeParts[1]);
+        final Instant validStart = Instant.ofEpochSecond(epochSecond, nanoAdjustment);
+        return new TransactionId(accountId, validStart);
     }
 }
