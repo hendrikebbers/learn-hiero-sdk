@@ -13,7 +13,7 @@ public class HieroClientTest {
 
     @Test
     protected void testCreation() {
-        final AccountId operatorAccountId = AccountId.fromString("0.0.1234");
+        final AccountId operatorAccountId = AccountId.from("0.0.1234");
         final PrivateKey operatorKey = PrivateKey.generate(KeyAlgorithm.ED25519);
         final Account operatorAccount = Account.of(operatorAccountId, operatorKey);
         final String networkName = "hedera-testnet";
