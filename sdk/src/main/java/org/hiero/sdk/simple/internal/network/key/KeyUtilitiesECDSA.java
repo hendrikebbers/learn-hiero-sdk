@@ -32,7 +32,7 @@ import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-public class KeyUtilitiesECDSA {
+public final class KeyUtilitiesECDSA {
 
     static final X9ECParameters ECDSA_SECP256K1_CURVE = SECNamedCurves.getByName("secp256k1");
     static final ECDomainParameters ECDSA_SECP256K1_DOMAIN = new ECDomainParameters(
@@ -137,7 +137,7 @@ public class KeyUtilitiesECDSA {
         }
         throw new IllegalArgumentException("Unsupported key encoding: " + encoding);
     }
-    
+
     public static boolean verify(@NonNull final PublicKeyWithECDSA publicKey, @NonNull final byte[] message,
             @NonNull final byte[] signature) {
         Objects.requireNonNull(publicKey, "publicKey must not be null");

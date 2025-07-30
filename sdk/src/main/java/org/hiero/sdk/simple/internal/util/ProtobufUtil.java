@@ -17,7 +17,7 @@ import org.hiero.sdk.simple.network.keys.KeyEncoding;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-public class ProtobufUtil {
+public final class ProtobufUtil {
 
     public static TransactionID toProtobuf(@NonNull TransactionId transactionId) {
         var id = TransactionID.newBuilder();

@@ -14,7 +14,7 @@ import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.network.ConsensusNode;
 import org.jspecify.annotations.NonNull;
 
-public class GrpcClientImpl implements GrpcClient {
+public final class GrpcClientImpl implements GrpcClient {
 
     private final Channel channel;
 

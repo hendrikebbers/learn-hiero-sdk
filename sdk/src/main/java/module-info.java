@@ -8,9 +8,9 @@ module org.hiero.sdk.simple {
     exports org.hiero.sdk.simple.grpc;
     exports org.hiero.sdk.simple.transactions.spi;
 
-    requires org.bouncycastle.provider;
     requires static org.jspecify;
     requires static com.google.auto.service;
+    requires org.bouncycastle.provider;
     requires io.grpc;
     requires com.hiero.proto;
     requires com.google.protobuf;
@@ -20,4 +20,7 @@ module org.hiero.sdk.simple {
     provides org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider with
             org.hiero.sdk.simple.internal.network.settings.HederaTestnetSettingsProvider,
             org.hiero.sdk.simple.internal.network.settings.HieroTestEnvironmentSettingsProvider;
+
+    uses org.hiero.sdk.simple.transactions.spi.TransactionProtobuffSupport;
+    provides org.hiero.sdk.simple.transactions.spi.TransactionProtobuffSupport with org.hiero.sdk.simple.internal.transactions.AccountCreateTransactionProtobuffSupport;
 }

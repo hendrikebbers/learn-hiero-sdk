@@ -1,7 +1,6 @@
 package org.hiero.sdk.simple.internal;
 
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
-import io.grpc.MethodDescriptor;
 import java.time.Duration;
 import java.util.Objects;
 import org.hiero.sdk.simple.FrozenTransaction;
@@ -12,11 +11,10 @@ import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.TransactionId;
-import org.hiero.sdk.simple.transactions.spi.ResponseFactory;
-import org.hiero.sdk.simple.transactions.spi.TransactionFactory;
+import org.hiero.sdk.simple.transactions.spi.TransactionProtobuffSupport;
 import org.jspecify.annotations.NonNull;
 
-public abstract class AbstractTransaction<T extends Transaction, R extends Response> implements
+public abstract class AbstractTransaction<R extends Response, T extends Transaction<T, R>> implements
         Transaction<T, R> {
 
     private Hbar fee = Hbar.ZERO;
@@ -29,24 +27,17 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Respo
     protected abstract T self();
 
     @NonNull
-    protected abstract TransactionFactory<T, R> getTransactionFactory();
-
-    @NonNull
-    protected abstract ResponseFactory<R> getResponseFactory();
-
-    @NonNull
-    protected abstract MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> getMethodDescriptor();
+    private TransactionProtobuffSupport<R, T> getTransactionFactory() {
+        return TransactionProtobuffSupport.of(self().getClass());
+    }
 
     @Override
     @NonNull
     public FrozenTransaction<T, R> freezeTransaction(@NonNull final HieroClient client) {
         final AccountId nodeAccount = client.getNetworkSettings().getConsensusNodes().iterator().next().getAccountId();
         final TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
-        final TransactionFactory<T, R> transactionFactory = getTransactionFactory();
-        final ResponseFactory<R> responseFactory = getResponseFactory();
-        final MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor = getMethodDescriptor();
-        return new DefaultFrozenTransaction(methodDescriptor, transactionBody, transactionFactory, responseFactory,
-                client);
+        final TransactionProtobuffSupport<R, T> transactionFactory = getTransactionFactory();
+        return new DefaultFrozenTransaction(transactionBody, transactionFactory, client);
     }
 
     @NonNull
@@ -60,11 +51,9 @@ public abstract class AbstractTransaction<T extends Transaction, R extends Respo
                 .setTransactionFee(fee.tinybar())
                 .setTransactionValidDuration(ProtobufUtil.toProtobuf(validDuration).toBuilder())
                 .setMemo(memo);
-        updateBodyBuilderWithSpecifics(builder);
+        getTransactionFactory().updateBodyBuilderWithSpecifics(self(), builder);
         return builder.build();
     }
-
-    protected abstract void updateBodyBuilderWithSpecifics(TransactionBody.@NonNull Builder builder);
 
     @NonNull
     public Hbar getFee() {

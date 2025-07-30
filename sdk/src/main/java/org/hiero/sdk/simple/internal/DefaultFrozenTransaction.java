@@ -3,6 +3,7 @@ package org.hiero.sdk.simple.internal;
 import com.hedera.hashgraph.sdk.proto.SignatureMap;
 import com.hedera.hashgraph.sdk.proto.Transaction;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
+import com.hedera.hashgraph.sdk.proto.TransactionResponse;
 import io.grpc.MethodDescriptor;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,15 +18,13 @@ import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
+import org.hiero.sdk.simple.network.TransactionId;
 import org.hiero.sdk.simple.network.keys.PublicKey;
-import org.hiero.sdk.simple.transactions.spi.ResponseFactory;
-import org.hiero.sdk.simple.transactions.spi.TransactionFactory;
+import org.hiero.sdk.simple.transactions.spi.TransactionProtobuffSupport;
 import org.jspecify.annotations.NonNull;
 
-public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sdk.simple.Transaction> implements
+public final class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sdk.simple.Transaction<T, R>> implements
         FrozenTransaction<T, R> {
-
-    private final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor;
 
     private final Map<PublicKey, byte[]> transactionSignatures = new HashMap<>();
 
@@ -33,24 +32,23 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
 
     private final HieroClient client;
 
-    private final TransactionFactory<T, R> transactionFactory;
-
-    private final ResponseFactory<R> responseFactory;
+    private final TransactionProtobuffSupport<R, T> transactionFactory;
 
     public DefaultFrozenTransaction(
-            @NonNull final MethodDescriptor<Transaction, com.hedera.hashgraph.sdk.proto.TransactionResponse> methodDescriptor,
             @NonNull final TransactionBody transactionBody,
-            @NonNull final TransactionFactory<T, R> transactionFactory,
-            @NonNull final ResponseFactory<R> responseFactory,
+            @NonNull final TransactionProtobuffSupport<R, T> transactionFactory,
             @NonNull final HieroClient client) {
-        this.methodDescriptor = Objects.requireNonNull(methodDescriptor, "methodDescriptor must not be null");
         this.transactionBody = Objects.requireNonNull(transactionBody, "transactionBody must not be null");
         this.client = Objects.requireNonNull(client, "client must not be null");
         this.transactionFactory = Objects.requireNonNull(transactionFactory, "transactionFactory must not be null");
-        this.responseFactory = Objects.requireNonNull(responseFactory, "responseFactory must not be null");
         if (client.signTransactionsAutomaticallyWithOperator()) {
             sign(client.getOperatorAccount().keyPair());
         }
+    }
+
+    @Override
+    public TransactionId transactionId() {
+        return ProtobufUtil.fromProtobuf(transactionBody.getTransactionID());
     }
 
     @Override
@@ -73,11 +71,12 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
         Objects.requireNonNull(client, "client must not be null");
         final Transaction protobufTransaction = createProtobufTransaction();
         final GrpcClient grpcClient = client.getGrpcClient();
+        final MethodDescriptor<Transaction, TransactionResponse> methodDescriptor = transactionFactory.getMethodDescriptor();
         return grpcClient.call(methodDescriptor, protobufTransaction).handle((response, throwable) -> {
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
             }
-            return responseFactory.createResponse(client, protobufTransaction, response);
+            return transactionFactory.createResponse(client, protobufTransaction, response);
         });
     }
 

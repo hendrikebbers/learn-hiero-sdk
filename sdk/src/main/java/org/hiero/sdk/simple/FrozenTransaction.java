@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
+import org.hiero.sdk.simple.network.TransactionId;
 import org.hiero.sdk.simple.network.keys.KeyPair;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
@@ -17,6 +18,8 @@ import org.jspecify.annotations.NonNull;
  * @param <R> the type of the response
  */
 public interface FrozenTransaction<T extends Transaction, R extends Response> {
+
+    TransactionId transactionId();
 
     /**
      * Signs the transaction with the given private key.

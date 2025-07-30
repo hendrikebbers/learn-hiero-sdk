@@ -9,7 +9,7 @@ import org.hiero.sdk.simple.network.TransactionId;
 import org.hiero.sdk.simple.network.settings.NetworkSettings;
 import org.jspecify.annotations.NonNull;
 
-public class HieroClientImpl implements HieroClient {
+public final class HieroClientImpl implements HieroClient {
 
     private final Account operatorAccount;
 

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.hiero.sdk.simple.network.ConsensusNode;
 import org.jspecify.annotations.NonNull;
 
-public class GrpcChannelFactory {
+public final class GrpcChannelFactory {
 
     private final static Executor executor = Executors.newCachedThreadPool();
 

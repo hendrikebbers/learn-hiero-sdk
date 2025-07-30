@@ -2,7 +2,7 @@ package org.hiero.sdk.simple.internal.grpc;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
-public class CryptoServiceGrpc {
+public final class CryptoServiceGrpc {
 
     private static volatile io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction,
             com.hedera.hashgraph.sdk.proto.TransactionResponse> getCreateAccountMethod;

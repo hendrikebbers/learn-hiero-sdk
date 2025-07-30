@@ -13,7 +13,7 @@ import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
-public class KeyFactory {
+public final class KeyFactory {
 
     private KeyFactory() {
     }
