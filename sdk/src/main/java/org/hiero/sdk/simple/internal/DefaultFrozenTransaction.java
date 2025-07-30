@@ -88,10 +88,6 @@ public class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sd
     }
 
     private Transaction createProtobufTransaction() {
-        if (transactionBody == null) {
-            throw new IllegalStateException(
-                    "transaction body is not built; call freeze() before creating protobuf transaction");
-        }
         final SignatureMap.Builder signatureBuilder = SignatureMap.newBuilder();
         transactionSignatures.entrySet().forEach(entry -> {
             signatureBuilder.addSigPair(ProtobufUtil.toSignaturePairProtobuf(entry.getKey(), entry.getValue()));

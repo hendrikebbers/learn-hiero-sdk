@@ -18,5 +18,6 @@ module org.hiero.sdk.simple {
 
     uses org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider;
     provides org.hiero.sdk.simple.network.settings.spi.NetworkSettingsProvider with
-            org.hiero.sdk.simple.internal.network.settings.HederaTestnetSettingsProvider;
+            org.hiero.sdk.simple.internal.network.settings.HederaTestnetSettingsProvider,
+            org.hiero.sdk.simple.internal.network.settings.HieroTestEnvironmentSettingsProvider;
 }
