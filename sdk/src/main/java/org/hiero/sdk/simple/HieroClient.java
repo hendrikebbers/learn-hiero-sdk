@@ -1,5 +1,9 @@
 package org.hiero.sdk.simple;
 
+import com.hedera.hashgraph.sdk.proto.TransactionReceipt;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.function.BiFunction;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.HieroClientImpl;
 import org.hiero.sdk.simple.network.Account;
@@ -29,6 +33,14 @@ public interface HieroClient {
      */
     @NonNull
     TransactionId generateTransactionId();
+
+    @NonNull
+    CompletableFuture<Receipt> queryTransactionReceipt(@NonNull TransactionId transactionId);
+
+    @NonNull
+    <R extends Receipt> CompletableFuture<R> queryTransactionReceipt(@NonNull TransactionId transactionId,
+            BiFunction<TransactionId, TransactionReceipt, R> receiptFactory);
+
 
     /**
      * Returns the gRPC client used to communicate with the Hiero network.
@@ -72,7 +84,7 @@ public interface HieroClient {
      */
     @NonNull
     static HieroClient create(@NonNull final Account operatorAccount, @NonNull final NetworkSettings networkSettings) {
-        return new HieroClientImpl(operatorAccount, networkSettings);
+        return new HieroClientImpl(operatorAccount, networkSettings, Executors.newCachedThreadPool());
     }
 
     /**
@@ -88,7 +100,6 @@ public interface HieroClient {
     static HieroClient create(@NonNull final Account operatorAccount, @NonNull final String networkIdentifier) {
         final NetworkSettings networkSettings = NetworkSettings.forIdentifier(networkIdentifier)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid network identifier: " + networkIdentifier));
-        return new HieroClientImpl(operatorAccount, networkSettings);
+        return new HieroClientImpl(operatorAccount, networkSettings, Executors.newCachedThreadPool());
     }
-
 }

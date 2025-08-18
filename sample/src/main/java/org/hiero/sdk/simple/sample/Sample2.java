@@ -14,7 +14,7 @@ public class Sample2 {
 
     public static void main(String[] args) throws Exception {
         final Account operatorAccount = createOperatorAccount();
-        final HieroClient hieroClient = HieroClient.create(operatorAccount, "hiero-test");
+        final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
         final PublicKey publicKeyForNewAccount = KeyPair.generate(KeyAlgorithm.ED25519).publicKey();
 
         new AccountCreateTransaction().
@@ -22,14 +22,13 @@ public class Sample2 {
                 .withInitialBalance(Hbar.of(2))
                 .freezeTransaction(hieroClient)
                 .sendAndWait();
-
-
+        System.out.println("huhu");
     }
 
     private static Account createOperatorAccount() {
         final AccountId operatorAccountId = AccountId.from("0.0.1001");
         final PrivateKey operatorPrivateKey = PrivateKey.from(
-                "3030020100300706052b8104000a0422042075f2484bc16882f1158453ac3afdb5d1620267ce45b2871122bd8c06af5fb396");
+                "3030020100300706052b8104000a0422042086cb696f64aefea6450546c58f5c19e4353aea309d7f03ee52255f235f5e410b");
         return Account.of(operatorAccountId, operatorPrivateKey);
     }
 }

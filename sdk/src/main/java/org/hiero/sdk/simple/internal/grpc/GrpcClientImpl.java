@@ -10,6 +10,7 @@ import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.network.ConsensusNode;
 import org.jspecify.annotations.NonNull;
@@ -18,12 +19,8 @@ public final class GrpcClientImpl implements GrpcClient {
 
     private final Channel channel;
 
-    public GrpcClientImpl(@NonNull final ConsensusNode node) {
-        this(GrpcChannelFactory.createChannel(node));
-    }
-
-    public GrpcClientImpl(@NonNull final Channel channel) {
-        this.channel = Objects.requireNonNull(channel, "channel must not be null");
+    public GrpcClientImpl(@NonNull final ConsensusNode node, @NonNull final Executor executor) {
+        this.channel = GrpcChannelFactory.createChannel(node, executor);
     }
 
     @Override

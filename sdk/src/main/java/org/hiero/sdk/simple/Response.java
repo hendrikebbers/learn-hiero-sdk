@@ -7,20 +7,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.hiero.sdk.simple.network.TransactionId;
 
-public interface Response {
+public interface Response<R extends Receipt> {
 
     TransactionId transactionId();
 
-    CompletableFuture<Receipt> getReceipt();
+    CompletableFuture<R> queryReceipt();
 
-    default Receipt getReceiptAndWait(long timeout, TimeUnit unit)
+    default R queryReceiptAndWait(long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         Objects.requireNonNull(unit, "unit must not be null");
         if (timeout < 0) {
             throw new IllegalArgumentException("timeout must be non-negative");
         }
-        return getReceipt().get(timeout, unit);
+        return queryReceipt().get(timeout, unit);
     }
 
-    Receipt getReceiptAndWait() throws InterruptedException, ExecutionException, TimeoutException;
+    R queryReceiptAndWait() throws InterruptedException, ExecutionException, TimeoutException;
 }

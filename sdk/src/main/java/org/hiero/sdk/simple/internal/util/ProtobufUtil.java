@@ -132,7 +132,7 @@ public final class ProtobufUtil {
         return new TransactionId(accountId, validStart);
     }
 
-    private static AccountId fromProtobuf(AccountID accountID) {
+    public static AccountId fromProtobuf(AccountID accountID) {
         Objects.requireNonNull(accountID);
         return new AccountId(
                 accountID.getShardNum(),

@@ -27,22 +27,22 @@ public record TransactionId(@NonNull AccountId accountId, @NonNull Instant valid
         Objects.requireNonNull(validStart, "validStart must not be null");
     }
 
-    public CompletableFuture<Receipt> getReceipt(HieroClient client) {
-        throw new UnsupportedOperationException("getReceipt is not implemented for TransactionId");
+    public CompletableFuture<Receipt> queryReceipt(HieroClient client) {
+        return client.queryTransactionReceipt(this);
     }
 
-    public Receipt getReceiptAndWait(HieroClient client, long timeout, TimeUnit unit)
+    public Receipt queryReceiptAndWait(HieroClient client, long timeout, TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         Objects.requireNonNull(unit, "unit must not be null");
         if (timeout < 0) {
             throw new IllegalArgumentException("timeout must be non-negative");
         }
-        return getReceipt(client).get(timeout, unit);
+        return queryReceipt(client).get(timeout, unit);
     }
 
-    public Receipt getReceiptAndWait(HieroClient client)
+    public Receipt queryReceiptAndWait(HieroClient client)
             throws InterruptedException, ExecutionException, TimeoutException {
-        return getReceiptAndWait(client, client.getDefaultTimeoutInMs(), TimeUnit.SECONDS);
+        return queryReceiptAndWait(client, client.getDefaultTimeoutInMs(), TimeUnit.SECONDS);
     }
 
     public String toString() {

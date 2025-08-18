@@ -2,13 +2,15 @@ package org.hiero.sdk.simple.internal.grpc;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
+import com.hedera.hashgraph.sdk.proto.Response;
+
 public final class CryptoServiceGrpc {
 
     private static volatile io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Transaction,
             com.hedera.hashgraph.sdk.proto.TransactionResponse> getCreateAccountMethod;
 
     private static volatile io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query,
-            com.hedera.hashgraph.sdk.proto.Response> getGetTransactionReceiptsMethod;
+            Response> getGetTransactionReceiptsMethod;
 
     public static final java.lang.String SERVICE_NAME = "proto.CryptoService";
 
@@ -35,20 +37,20 @@ public final class CryptoServiceGrpc {
     }
 
     public static io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query,
-            com.hedera.hashgraph.sdk.proto.Response> getGetTransactionReceiptsMethod() {
-        io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, com.hedera.hashgraph.sdk.proto.Response> getGetTransactionReceiptsMethod;
+            Response> getGetTransactionReceiptsMethod() {
+        io.grpc.MethodDescriptor<com.hedera.hashgraph.sdk.proto.Query, Response> getGetTransactionReceiptsMethod;
         if ((getGetTransactionReceiptsMethod = CryptoServiceGrpc.getGetTransactionReceiptsMethod) == null) {
             synchronized (CryptoServiceGrpc.class) {
                 if ((getGetTransactionReceiptsMethod = CryptoServiceGrpc.getGetTransactionReceiptsMethod) == null) {
                     CryptoServiceGrpc.getGetTransactionReceiptsMethod = getGetTransactionReceiptsMethod =
-                            io.grpc.MethodDescriptor.<com.hedera.hashgraph.sdk.proto.Query, com.hedera.hashgraph.sdk.proto.Response>newBuilder()
+                            io.grpc.MethodDescriptor.<com.hedera.hashgraph.sdk.proto.Query, Response>newBuilder()
                                     .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
                                     .setFullMethodName(generateFullMethodName(SERVICE_NAME, "getTransactionReceipts"))
                                     .setSampledToLocalTracing(true)
                                     .setRequestMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
                                             com.hedera.hashgraph.sdk.proto.Query.getDefaultInstance()))
                                     .setResponseMarshaller(io.grpc.protobuf.lite.ProtoLiteUtils.marshaller(
-                                            com.hedera.hashgraph.sdk.proto.Response.getDefaultInstance()))
+                                            Response.getDefaultInstance()))
                                     .build();
                 }
             }

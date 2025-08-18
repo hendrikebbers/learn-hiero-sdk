@@ -11,7 +11,7 @@ import org.hiero.sdk.simple.network.keys.KeyAlgorithm;
 import org.hiero.sdk.simple.network.keys.KeyPair;
 import org.hiero.sdk.simple.network.keys.PrivateKey;
 import org.hiero.sdk.simple.network.keys.PublicKey;
-import org.hiero.sdk.simple.transactions.AccountCreateResponse;
+import org.hiero.sdk.simple.transactions.AccountCreateReceipt;
 import org.hiero.sdk.simple.transactions.AccountCreateTransaction;
 
 public class Sample {
@@ -21,26 +21,16 @@ public class Sample {
     public static void main(String[] args) throws Exception {
         final Account operatorAccount = createOperatorAccount();
         final HieroClient hieroClient = HieroClient.create(operatorAccount, "hedera-testnet");
-
         final PublicKey publicKeyForNewAccount = KeyPair.generate(KeyAlgorithm.ED25519).publicKey();
 
-        final AccountCreateResponse response = new AccountCreateTransaction()
-                .withKey(publicKeyForNewAccount)
-                .withInitialBalance(Hbar.of(2))
-                .freezeTransaction(hieroClient)
-                .sendAndWait();
-        log.log(INFO, "Transaction {0} send", response.transactionId());
-
-        // final Receipt receipt = response.getReceiptAndWait();
-        // log.log(INFO, "Transaction {0} executed", receipt.transactionId());
-
-        new AccountCreateTransaction()
+        final AccountCreateReceipt accountCreateReceipt = new AccountCreateTransaction()
                 .withKey(publicKeyForNewAccount)
                 .withInitialBalance(Hbar.of(2))
                 .withKey(publicKeyForNewAccount)
                 .freezeTransaction(hieroClient)
-                .sendAndWait();
-
+                .sendAndWait()
+                .queryReceiptAndWait();
+        log.log(INFO, "Account {0} created", accountCreateReceipt.createdAccount());
 
     }
 
