@@ -10,7 +10,7 @@ import io.grpc.MethodDescriptor;
 import java.time.Duration;
 import java.util.Objects;
 import org.hiero.sdk.simple.HieroClient;
-import org.hiero.sdk.simple.internal.grpc.CryptoServiceGrpc;
+import org.hiero.sdk.simple.internal.grpc.GrpcMethodDescriptorFactory;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.Hbar;
 import org.hiero.sdk.simple.network.HbarUnit;
@@ -44,7 +44,11 @@ public class AccountCreateTransactionProtobuffSupport implements
 
     @Override
     public MethodDescriptor<Transaction, TransactionResponse> getMethodDescriptor() {
-        return CryptoServiceGrpc.getCreateAccountMethod();
+        return GrpcMethodDescriptorFactory.getOrCreateMethodDescriptor(
+                "proto.CryptoService",
+                "createAccount",
+                com.hedera.hashgraph.sdk.proto.Transaction::getDefaultInstance,
+                com.hedera.hashgraph.sdk.proto.TransactionResponse::getDefaultInstance);
     }
 
     @Override

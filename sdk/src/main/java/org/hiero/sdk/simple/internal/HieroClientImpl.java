@@ -16,8 +16,8 @@ import java.util.function.BiFunction;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Receipt;
 import org.hiero.sdk.simple.grpc.GrpcClient;
-import org.hiero.sdk.simple.internal.grpc.CryptoServiceGrpc;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
+import org.hiero.sdk.simple.internal.grpc.GrpcMethodDescriptorFactory;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
 import org.hiero.sdk.simple.network.Account;
 import org.hiero.sdk.simple.network.TransactionId;
@@ -59,7 +59,12 @@ public final class HieroClientImpl implements HieroClient {
         final Query query = Query.newBuilder()
                 .setTransactionGetReceipt(typesQuery)
                 .build();
-        final MethodDescriptor<Query, Response> methodDescriptor = CryptoServiceGrpc.getGetTransactionReceiptsMethod();
+        final MethodDescriptor<Query, Response> methodDescriptor = GrpcMethodDescriptorFactory.getOrCreateMethodDescriptor(
+                "proto.CryptoService",
+                "getTransactionReceipts",
+                com.hedera.hashgraph.sdk.proto.Query::getDefaultInstance,
+                Response::getDefaultInstance);
+        ;
         return getGrpcClient().call(methodDescriptor, query).handle((response, throwable) -> {
             if (throwable != null) {
                 throw new RuntimeException("Transaction execution failed", throwable);
