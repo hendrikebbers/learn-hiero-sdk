@@ -1,6 +1,7 @@
 package org.hiero.sdk.simple;
 
 import com.hedera.hashgraph.sdk.proto.TransactionReceipt;
+import com.hedera.hashgraph.sdk.proto.TransactionRecord;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
@@ -102,4 +103,7 @@ public interface HieroClient {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid network identifier: " + networkIdentifier));
         return new HieroClientImpl(operatorAccount, networkSettings, Executors.newCachedThreadPool());
     }
+
+    <R extends Record> CompletableFuture<R> queryTransactionRecord(TransactionId transactionId,
+            BiFunction<TransactionId, TransactionRecord, R> recordFactory);
 }

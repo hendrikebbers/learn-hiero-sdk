@@ -8,6 +8,7 @@ import com.hedera.hashgraph.sdk.proto.ResponseType;
 import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptQuery;
 import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptResponse;
 import com.hedera.hashgraph.sdk.proto.TransactionReceipt;
+import com.hedera.hashgraph.sdk.proto.TransactionRecord;
 import io.grpc.MethodDescriptor;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Receipt;
+import org.hiero.sdk.simple.Record;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
 import org.hiero.sdk.simple.internal.grpc.GrpcMethodDescriptorFactory;
@@ -61,7 +63,7 @@ public final class HieroClientImpl implements HieroClient {
                 .build();
         final MethodDescriptor<Query, Response> methodDescriptor = GrpcMethodDescriptorFactory.getOrCreateMethodDescriptor(
                 "proto.CryptoService",
-                "getTransactionReceipts",
+                "getTxRecordByTxID",
                 com.hedera.hashgraph.sdk.proto.Query::getDefaultInstance,
                 Response::getDefaultInstance);
         ;
@@ -87,10 +89,16 @@ public final class HieroClientImpl implements HieroClient {
     }
 
     @Override
+    public <R extends Record> CompletableFuture<R> queryTransactionRecord(TransactionId transactionId,
+            BiFunction<TransactionId, TransactionRecord, R> recordFactory) {
+        return null;
+    }
+
+    @Override
     public CompletableFuture<Receipt> queryTransactionReceipt(final @NonNull TransactionId transactionId) {
         return queryTransactionReceipt(transactionId, (id, protoReceipt) -> new DefaultReceipt(id));
     }
-
+    
     @Override
     public @NonNull GrpcClient getGrpcClient() {
         return new GrpcClientImpl(networkSettings.getConsensusNodes().iterator().next(), executor);
