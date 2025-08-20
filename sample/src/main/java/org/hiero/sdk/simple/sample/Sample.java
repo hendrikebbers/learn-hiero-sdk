@@ -27,9 +27,10 @@ public class Sample {
                 .withKey(publicKeyForNewAccount)
                 .withInitialBalance(Hbar.of(2))
                 .withKey(publicKeyForNewAccount)
-                .freezeTransaction(hieroClient)
+                .packTransaction(hieroClient)
                 .sendAndWait()
-                .queryReceiptAndWait();
+                .queryRecordAndWait()
+                .receipt();
         log.log(INFO, "Account {0} created", accountCreateReceipt.createdAccount());
 
     }

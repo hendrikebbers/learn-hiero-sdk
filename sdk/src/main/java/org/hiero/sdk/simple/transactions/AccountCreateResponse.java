@@ -38,6 +38,6 @@ public final class AccountCreateResponse extends
         }
         final AccountId accountID = ProtobufUtil.fromProtobuf(accountIdProto);
         final AccountCreateReceipt receipt = createReceipt(transactionId, record.getReceipt());
-        return new AccountCreateRecord(transactionId, accountID, receipt);
+        return new AccountCreateRecord(accountID, receipt);
     }
 }

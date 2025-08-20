@@ -36,7 +36,7 @@ public interface Transaction<T extends Transaction, R extends Response> {
      * called.
      *
      * @param client the Hiero client used to freeze the transaction
-     * @return a {@link FrozenTransaction} representing the frozen state of this transaction
+     * @return a {@link PackedTransaction} representing the frozen state of this transaction
      */
-    FrozenTransaction<T, R> freezeTransaction(@NonNull HieroClient client);
+    PackedTransaction<T, R> packTransaction(@NonNull HieroClient client);
 }

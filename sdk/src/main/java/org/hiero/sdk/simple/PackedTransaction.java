@@ -12,12 +12,12 @@ import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.jspecify.annotations.NonNull;
 
 /**
- * Represents a frozen transaction that can be signed and sent to the network.
+ * Represents a packed transaction that can be signed and sent to the network.
  *
  * @param <T> the type of the transaction
  * @param <R> the type of the response
  */
-public interface FrozenTransaction<T extends Transaction, R extends Response> {
+public interface PackedTransaction<T extends Transaction, R extends Response> {
 
     TransactionId transactionId();
 
@@ -25,11 +25,11 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
      * Signs the transaction with the given private key.
      *
      * @param keyPair the key pair containing the public and private keys to sign the transaction with
-     * @return a new {@link FrozenTransaction} instance with the signature applied
+     * @return a new {@link PackedTransaction} instance with the signature applied
      * @throws NullPointerException if {@code privateKey} is null
      */
     @NonNull
-    default FrozenTransaction<T, R> sign(@NonNull final KeyPair keyPair) {
+    default PackedTransaction<T, R> sign(@NonNull final KeyPair keyPair) {
         Objects.requireNonNull(keyPair, "keyPair must not be null");
         return sign(keyPair.publicKey(), keyPair.privateKey()::sign);
     }
@@ -39,21 +39,21 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
      *
      * @param publicKey         the public key to sign the transaction with
      * @param transactionSigner a function that takes a byte array and returns a signed byte array
-     * @return a new {@link FrozenTransaction} instance with the signature applied
+     * @return a new {@link PackedTransaction} instance with the signature applied
      * @throws NullPointerException if {@code publicKey} or {@code transactionSigner} is null
      */
     @NonNull
-    FrozenTransaction<T, R> sign(@NonNull PublicKey publicKey, @NonNull UnaryOperator<byte[]> transactionSigner);
+    PackedTransaction<T, R> sign(@NonNull PublicKey publicKey, @NonNull UnaryOperator<byte[]> transactionSigner);
 
     /**
-     * Sends the frozen transaction to the network asynchronously.
+     * Sends the packed transaction to the network asynchronously.
      *
      * @return a {@link CompletableFuture} that will complete with the response of the transaction
      */
     CompletableFuture<R> send();
 
     /**
-     * Sends the frozen transaction to the network and waits for the response.
+     * Sends the packed transaction to the network and waits for the response.
      *
      * @return the response of the transaction
      * @throws ExecutionException   if the transaction fails
@@ -70,7 +70,7 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
     }
 
     /**
-     * Sends the frozen transaction to the network and waits for the response with a default timeout.
+     * Sends the packed transaction to the network and waits for the response with a default timeout.
      *
      * @return the response of the transaction
      * @throws ExecutionException   if the transaction fails
@@ -80,7 +80,7 @@ public interface FrozenTransaction<T extends Transaction, R extends Response> {
     R sendAndWait() throws ExecutionException, InterruptedException, TimeoutException;
 
     /**
-     * Unpacks the frozen transaction into its original transaction type. Each call to this method will return a new
+     * Unpacks the packed transaction into its original transaction type. Each call to this method will return a new
      * instance.
      *
      * @return the original transaction

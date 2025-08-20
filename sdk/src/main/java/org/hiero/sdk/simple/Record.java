@@ -4,7 +4,9 @@ import org.hiero.sdk.simple.network.TransactionId;
 
 public interface Record<R extends Receipt> {
 
-    TransactionId transactionId();
+    default TransactionId transactionId() {
+        return receipt().transactionId();
+    }
 
     R receipt();
 }

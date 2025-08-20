@@ -20,7 +20,7 @@ public class Sample2 {
         new AccountCreateTransaction().
                 withKey(publicKeyForNewAccount)
                 .withInitialBalance(Hbar.of(2))
-                .freezeTransaction(hieroClient)
+                .packTransaction(hieroClient)
                 .sendAndWait();
         System.out.println("huhu");
     }

@@ -113,7 +113,7 @@ public final class HieroClientImpl implements HieroClient {
             final TransactionStatus status = ProtobufUtil.fromProtobuf(protoReceipt.getStatus());
             final ExchangeRate exchangeRate = ProtobufUtil.fromProtobuf(protoReceipt.getExchangeRate());
             final DefaultReceipt receipt = new DefaultReceipt(id, status, exchangeRate);
-            return new DefaultRecord(id, receipt);
+            return new DefaultRecord(receipt);
         });
     }
 

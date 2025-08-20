@@ -3,8 +3,8 @@ package org.hiero.sdk.simple.internal;
 import com.hedera.hashgraph.sdk.proto.TransactionBody;
 import java.time.Duration;
 import java.util.Objects;
-import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
+import org.hiero.sdk.simple.PackedTransaction;
 import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.Transaction;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
@@ -33,11 +33,11 @@ public abstract class AbstractTransaction<R extends Response, T extends Transact
 
     @Override
     @NonNull
-    public FrozenTransaction<T, R> freezeTransaction(@NonNull final HieroClient client) {
+    public PackedTransaction<T, R> packTransaction(@NonNull final HieroClient client) {
         final AccountId nodeAccount = client.getNetworkSettings().getConsensusNodes().iterator().next().getAccountId();
         final TransactionBody transactionBody = buildTransactionBody(client.generateTransactionId(), nodeAccount);
         final TransactionProtobuffSupport<R, T> transactionFactory = getTransactionFactory();
-        return new DefaultFrozenTransaction(transactionBody, transactionFactory, client);
+        return new DefaultPackedTransaction(transactionBody, transactionFactory, client);
     }
 
     @NonNull

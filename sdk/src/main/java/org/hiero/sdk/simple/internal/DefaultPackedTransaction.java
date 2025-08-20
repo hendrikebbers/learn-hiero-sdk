@@ -13,8 +13,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.UnaryOperator;
-import org.hiero.sdk.simple.FrozenTransaction;
 import org.hiero.sdk.simple.HieroClient;
+import org.hiero.sdk.simple.PackedTransaction;
 import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.util.ProtobufUtil;
@@ -23,8 +23,8 @@ import org.hiero.sdk.simple.network.keys.PublicKey;
 import org.hiero.sdk.simple.transactions.spi.TransactionProtobuffSupport;
 import org.jspecify.annotations.NonNull;
 
-public final class DefaultFrozenTransaction<R extends Response, T extends org.hiero.sdk.simple.Transaction<T, R>> implements
-        FrozenTransaction<T, R> {
+public final class DefaultPackedTransaction<R extends Response, T extends org.hiero.sdk.simple.Transaction<T, R>> implements
+        PackedTransaction<T, R> {
 
     private final Map<PublicKey, byte[]> transactionSignatures = new HashMap<>();
 
@@ -34,7 +34,7 @@ public final class DefaultFrozenTransaction<R extends Response, T extends org.hi
 
     private final TransactionProtobuffSupport<R, T> transactionFactory;
 
-    public DefaultFrozenTransaction(
+    public DefaultPackedTransaction(
             @NonNull final TransactionBody transactionBody,
             @NonNull final TransactionProtobuffSupport<R, T> transactionFactory,
             @NonNull final HieroClient client) {
@@ -52,7 +52,7 @@ public final class DefaultFrozenTransaction<R extends Response, T extends org.hi
     }
 
     @Override
-    public @NonNull FrozenTransaction sign(@NonNull final PublicKey publicKey,
+    public @NonNull PackedTransaction sign(@NonNull final PublicKey publicKey,
             @NonNull final UnaryOperator<byte[]> transactionSigner) {
         Objects.requireNonNull(publicKey, "publicKey must not be null");
         Objects.requireNonNull(transactionSigner, "transactionSigner must not be null");
