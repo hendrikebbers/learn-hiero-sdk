@@ -3,6 +3,7 @@ package org.hiero.sdk.simple.transactions;
 import com.hedera.hashgraph.sdk.proto.AccountID;
 import com.hedera.hashgraph.sdk.proto.TransactionReceipt;
 import com.hedera.hashgraph.sdk.proto.TransactionRecord;
+import java.time.Instant;
 import org.hiero.sdk.simple.ExchangeRate;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.TransactionStatus;
@@ -38,6 +39,7 @@ public final class AccountCreateResponse extends
         }
         final AccountId accountID = ProtobufUtil.fromProtobuf(accountIdProto);
         final AccountCreateReceipt receipt = createReceipt(transactionId, record.getReceipt());
-        return new AccountCreateRecord(accountID, receipt);
+        final Instant consensusTimestamp = ProtobufUtil.fromProtobuf(record.getConsensusTimestamp());
+        return new AccountCreateRecord(receipt, consensusTimestamp);
     }
 }

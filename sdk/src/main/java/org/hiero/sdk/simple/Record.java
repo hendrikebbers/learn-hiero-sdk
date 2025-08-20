@@ -1,5 +1,6 @@
 package org.hiero.sdk.simple;
 
+import java.time.Instant;
 import org.hiero.sdk.simple.network.TransactionId;
 
 public interface Record<R extends Receipt> {
@@ -9,4 +10,6 @@ public interface Record<R extends Receipt> {
     }
 
     R receipt();
+
+    Instant consensusTimestamp();
 }

@@ -10,6 +10,7 @@ import com.hedera.hashgraph.sdk.proto.TransactionGetReceiptResponse;
 import com.hedera.hashgraph.sdk.proto.TransactionReceipt;
 import com.hedera.hashgraph.sdk.proto.TransactionRecord;
 import io.grpc.MethodDescriptor;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -113,7 +114,8 @@ public final class HieroClientImpl implements HieroClient {
             final TransactionStatus status = ProtobufUtil.fromProtobuf(protoReceipt.getStatus());
             final ExchangeRate exchangeRate = ProtobufUtil.fromProtobuf(protoReceipt.getExchangeRate());
             final DefaultReceipt receipt = new DefaultReceipt(id, status, exchangeRate);
-            return new DefaultRecord(receipt);
+            final Instant consensusTimestamp = ProtobufUtil.fromProtobuf(protoRecord.getConsensusTimestamp());
+            return new DefaultRecord(receipt, consensusTimestamp);
         });
     }
 
