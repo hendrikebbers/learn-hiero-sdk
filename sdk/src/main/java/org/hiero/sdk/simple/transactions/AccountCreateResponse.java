@@ -37,7 +37,6 @@ public final class AccountCreateResponse extends
         if (accountIdProto == null) {
             throw new IllegalStateException("Account ID is null in the receipt");
         }
-        final AccountId accountID = ProtobufUtil.fromProtobuf(accountIdProto);
         final AccountCreateReceipt receipt = createReceipt(transactionId, record.getReceipt());
         final Instant consensusTimestamp = ProtobufUtil.fromProtobuf(record.getConsensusTimestamp());
         return new AccountCreateRecord(receipt, consensusTimestamp);
