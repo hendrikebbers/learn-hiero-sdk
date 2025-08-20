@@ -15,7 +15,7 @@ import org.hiero.sdk.simple.Response;
 import org.hiero.sdk.simple.network.TransactionId;
 import org.jspecify.annotations.NonNull;
 
-public abstract class AbstractResponse<RECEIPT extends Receipt, RECORD extends Record> implements
+public abstract class AbstractResponse<RECEIPT extends Receipt, RECORD extends Record<RECEIPT>> implements
         Response<RECEIPT, RECORD> {
 
     private final HieroClient client;

@@ -42,6 +42,12 @@ public interface HieroClient {
     <R extends Receipt> CompletableFuture<R> queryTransactionReceipt(@NonNull TransactionId transactionId,
             BiFunction<TransactionId, TransactionReceipt, R> receiptFactory);
 
+    @NonNull
+    CompletableFuture<Record> queryTransactionRecord(@NonNull TransactionId transactionId);
+
+    <RECEIPT extends Receipt, RECORD extends Record<RECEIPT>> CompletableFuture<RECORD> queryTransactionRecord(
+            TransactionId transactionId,
+            BiFunction<TransactionId, TransactionRecord, RECORD> recordFactory);
 
     /**
      * Returns the gRPC client used to communicate with the Hiero network.
@@ -104,6 +110,4 @@ public interface HieroClient {
         return new HieroClientImpl(operatorAccount, networkSettings, Executors.newCachedThreadPool());
     }
 
-    <R extends Record> CompletableFuture<R> queryTransactionRecord(TransactionId transactionId,
-            BiFunction<TransactionId, TransactionRecord, R> recordFactory);
 }

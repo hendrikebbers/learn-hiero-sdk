@@ -2,6 +2,8 @@ package org.hiero.sdk.simple.internal.util;
 
 import com.google.protobuf.ByteString;
 import com.hedera.hashgraph.sdk.proto.AccountID;
+import com.hedera.hashgraph.sdk.proto.ExchangeRateSet;
+import com.hedera.hashgraph.sdk.proto.ResponseCodeEnum;
 import com.hedera.hashgraph.sdk.proto.SignaturePair;
 import com.hedera.hashgraph.sdk.proto.Timestamp;
 import com.hedera.hashgraph.sdk.proto.TimestampSeconds;
@@ -9,6 +11,8 @@ import com.hedera.hashgraph.sdk.proto.TransactionID;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import org.hiero.sdk.simple.ExchangeRate;
+import org.hiero.sdk.simple.TransactionStatus;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.TransactionId;
 import org.hiero.sdk.simple.network.keys.Key;
@@ -139,5 +143,16 @@ public final class ProtobufUtil {
                 accountID.getRealmNum(),
                 accountID.getAccountNum(),
                 null);
+    }
+
+    public static ExchangeRate fromProtobuf(ExchangeRateSet exchangeRate) {
+        Objects.requireNonNull(exchangeRate, "exchangeRate must not be null");
+        return new ExchangeRate(exchangeRate.getCurrentRate().getHbarEquiv(),
+                exchangeRate.getCurrentRate().getCentEquiv(),
+                fromProtobuf(exchangeRate.getCurrentRate().getExpirationTime()));
+    }
+
+    public static TransactionStatus fromProtobuf(ResponseCodeEnum status) {
+        return TransactionStatus.UNDEFINED;
     }
 }

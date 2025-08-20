@@ -14,9 +14,11 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.BiFunction;
+import org.hiero.sdk.simple.ExchangeRate;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Receipt;
 import org.hiero.sdk.simple.Record;
+import org.hiero.sdk.simple.TransactionStatus;
 import org.hiero.sdk.simple.grpc.GrpcClient;
 import org.hiero.sdk.simple.internal.grpc.GrpcClientImpl;
 import org.hiero.sdk.simple.internal.grpc.GrpcMethodDescriptorFactory;
@@ -89,16 +91,32 @@ public final class HieroClientImpl implements HieroClient {
     }
 
     @Override
-    public <R extends Record> CompletableFuture<R> queryTransactionRecord(TransactionId transactionId,
-            BiFunction<TransactionId, TransactionRecord, R> recordFactory) {
+    public <RECEIPT extends Receipt, RECORD extends Record<RECEIPT>> CompletableFuture<RECORD> queryTransactionRecord(
+            TransactionId transactionId,
+            BiFunction<TransactionId, TransactionRecord, RECORD> recordFactory) {
         return null;
     }
 
     @Override
     public CompletableFuture<Receipt> queryTransactionReceipt(final @NonNull TransactionId transactionId) {
-        return queryTransactionReceipt(transactionId, (id, protoReceipt) -> new DefaultReceipt(id));
+        return queryTransactionReceipt(transactionId, (id, protoReceipt) -> {
+            final TransactionStatus status = ProtobufUtil.fromProtobuf(protoReceipt.getStatus());
+            final ExchangeRate exchangeRate = ProtobufUtil.fromProtobuf(protoReceipt.getExchangeRate());
+            return new DefaultReceipt(id, status, exchangeRate);
+        });
     }
-    
+
+    @Override
+    public @NonNull CompletableFuture<Record> queryTransactionRecord(@NonNull TransactionId transactionId) {
+        return queryTransactionRecord(transactionId, (id, protoRecord) -> {
+            final TransactionReceipt protoReceipt = protoRecord.getReceipt();
+            final TransactionStatus status = ProtobufUtil.fromProtobuf(protoReceipt.getStatus());
+            final ExchangeRate exchangeRate = ProtobufUtil.fromProtobuf(protoReceipt.getExchangeRate());
+            final DefaultReceipt receipt = new DefaultReceipt(id, status, exchangeRate);
+            return new DefaultRecord(id, receipt);
+        });
+    }
+
     @Override
     public @NonNull GrpcClient getGrpcClient() {
         return new GrpcClientImpl(networkSettings.getConsensusNodes().iterator().next(), executor);

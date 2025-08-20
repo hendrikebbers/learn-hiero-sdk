@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import org.hiero.sdk.simple.network.TransactionId;
 
-public interface Response<RECEIPT extends Receipt, RECORD extends Record> {
+public interface Response<RECEIPT extends Receipt, RECORD extends Record<RECEIPT>> {
 
     TransactionId transactionId();
 

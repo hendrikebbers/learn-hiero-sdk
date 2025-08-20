@@ -4,5 +4,8 @@ import org.hiero.sdk.simple.Record;
 import org.hiero.sdk.simple.network.AccountId;
 import org.hiero.sdk.simple.network.TransactionId;
 
-public record AccountCreateRecord(TransactionId transactionId, AccountId createdAccount) implements Record {
+public record AccountCreateRecord(TransactionId transactionId,
+                                  AccountId createdAccount,
+                                  AccountCreateReceipt receipt) implements
+        Record<AccountCreateReceipt> {
 }

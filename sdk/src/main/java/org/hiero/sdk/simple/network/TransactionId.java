@@ -10,6 +10,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicLong;
 import org.hiero.sdk.simple.HieroClient;
 import org.hiero.sdk.simple.Receipt;
+import org.hiero.sdk.simple.Record;
 import org.jspecify.annotations.NonNull;
 
 public record TransactionId(@NonNull AccountId accountId, @NonNull Instant validStart) {
@@ -45,6 +46,25 @@ public record TransactionId(@NonNull AccountId accountId, @NonNull Instant valid
         return queryReceiptAndWait(client, client.getDefaultTimeoutInMs(), TimeUnit.SECONDS);
     }
 
+
+    public CompletableFuture<Record> queryRecord(HieroClient client) {
+        return client.queryTransactionRecord(this);
+    }
+
+    public Record queryRecordAndWait(HieroClient client, long timeout, TimeUnit unit)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        Objects.requireNonNull(unit, "unit must not be null");
+        if (timeout < 0) {
+            throw new IllegalArgumentException("timeout must be non-negative");
+        }
+        return queryRecord(client).get(timeout, unit);
+    }
+
+    public Record queryRecordAndWait(HieroClient client)
+            throws InterruptedException, ExecutionException, TimeoutException {
+        return queryRecordAndWait(client, client.getDefaultTimeoutInMs(), TimeUnit.SECONDS);
+    }
+    
     public String toString() {
         if (accountId != null && validStart != null) {
             return "" + accountId + "@" + validStart.getEpochSecond() + "." + String.format("%09d",
