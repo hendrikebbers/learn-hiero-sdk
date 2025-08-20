@@ -59,7 +59,7 @@ public class AccountCreateTransactionProtobuffSupport implements
             final TransactionId transactionId = ProtobufUtil.fromProtobuf(body.getTransactionID());
             return new AccountCreateResponse(client, transactionId);
         } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error in converting protobuff objects", e);
         }
     }
 
